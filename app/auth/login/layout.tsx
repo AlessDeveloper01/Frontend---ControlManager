@@ -14,7 +14,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="flex items-stretch h-screen bg-cover bg-center relative bg-no-repeat">
+        <div className="flex items-stretch h-screen bg-cover bg-center relative bg-no-repeat overflow-x-hidden">
             <div className="lg:max-w-[500px] z-10 p-12 relative w-full h-full min-h-[1165px] border-t-[3px] border-primary bg-white">
                 <div className="flex flex-col h-full gap-4">
                     <div className="mb-8 text-center lg:text-start">

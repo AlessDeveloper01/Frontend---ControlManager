@@ -112,7 +112,7 @@ const FormAuth = () => {
 
       <FormInput
         label="Contraseña"
-        type="password"
+        type="text"
         name="password"
         placeholder="Ingresa acá!"
         className="form-input rounded-e-none"
