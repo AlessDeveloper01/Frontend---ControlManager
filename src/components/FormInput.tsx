@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { InputHTMLAttributes, ReactNode } from 'react'
 
 import { Control } from 'react-hook-form'

@@ -1,9 +1,10 @@
 'use client'
+
 import { Suspense, useEffect } from "react";
 import Preloader from "@/src/components/Global/Preloader";
 import React from "react";
 import { validationToken } from "@/src/helpers";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const Topbar = React.lazy(() => import('@/src/layouts/TopBar'))
 const LeftSideBar = React.lazy(() => import('@/src/layouts/LeftSideBar'))
@@ -11,10 +12,10 @@ const Footer = React.lazy(() => import('@/src/layouts/Footer'))
 
 const loading = () => <div />
 
-const validationAccountPersonal = async () => {
+const validationAccountPersonal = async (router: ReturnType<typeof useRouter>) => {
 	const data = await validationToken();
 	if(data.errors && data.errors.length > 0) {
-		redirect('/auth/login');
+		router.push('/auth/login');
 	}
 }
 
@@ -23,10 +24,12 @@ export default function DashboardLayout({
 }: {
  children: React.ReactNode;
 }) {
+	const router = useRouter();
 	useEffect(() => {
-		validationAccountPersonal();
-	}, []);
-  return (
+		validationAccountPersonal(router);
+	}, [router]);
+
+	return (
     <>
             <Suspense fallback={loading()}>
 				<div className="flex wrapper">

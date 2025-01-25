@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
+
 'use client'
 
 import { getAllProducts } from "@/src/api/product"

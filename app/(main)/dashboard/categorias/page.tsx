@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 
 const Table = dynamic(() => import('../../../../src/components/categorias/TableCategorias'), {
   loading: () => <p>Loading...</p>,
+  ssr: false
 })
 
 

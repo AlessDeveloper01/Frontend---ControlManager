@@ -7,7 +7,7 @@ interface VerticalFormProps {
 	children: ReactNode
 }
 
-const VerticalForm = ({ onSubmit, children }: VerticalFormProps) => {
+const VerticalForm = ({  children }: VerticalFormProps) => {
 	
 	return (
 		<form noValidate>

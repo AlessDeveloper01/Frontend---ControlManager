@@ -1,6 +1,9 @@
 import { OrderItemAPIListType } from "@/src/Objects";
 import axios, { AxiosError } from "axios";
 
+export const dynamic = "force-dynamic"
+export const fetchCache = "force-no-store"
+
 export const createOrder = async (order: OrderItemAPIListType) => {
     try {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/order/create`, {

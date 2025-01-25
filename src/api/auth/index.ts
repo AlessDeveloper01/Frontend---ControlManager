@@ -1,4 +1,6 @@
 import axios, { AxiosError } from "axios"
+export const dynamic = "force-dynamic"
+export const fetchCache = "force-no-store"
 
 export const registerUser = async (name: string, email: string, password: string, permission: string) => {
     try {

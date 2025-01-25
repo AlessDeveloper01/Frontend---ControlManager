@@ -1,4 +1,6 @@
 import axios, { AxiosError } from "axios";
+export const dynamic = "force-dynamic"
+export const fetchCache = "force-no-store"
 
 export const createProduct = async (name: string, price: number, categoryId: number, ingredients: { id: number }[]) => {
     try {

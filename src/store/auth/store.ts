@@ -2,17 +2,17 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 interface IUser {
-    id: number;
-    email: string;
-    name: string;
+    id?: number;
+    email?: string;
+    name?: string;
     password?: string;
-    permission: string;
-    createdAt: string;
-    updatedAt: string;
+    permission?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export type AuthStoreProps = {
-    id: number;
+    id?: number;
     email: string;
     password: string;
     permission: string;

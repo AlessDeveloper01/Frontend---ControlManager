@@ -7,32 +7,36 @@ import { redirect } from 'next/navigation';
 import React, { useEffect } from 'react'
 
 const LoginPage = () => {
-	const setErrors = useGlobal(state => state.setErrors);
+  const setErrors = useGlobal(state => state.setErrors);
 
-	useEffect(() => {
-		const getResult = async () => {
-			const solved = await validationToken();
-			if(solved.errors) {
-				setErrors(solved.errors);
-				localStorage.removeItem('token');
-				setTimeout(() => {
-					setErrors([]);
-				}, 1500);
-				return;
-			}
+  useEffect(() => {
+    const getResult = async () => {
+      const solved = await validationToken();
+      if (solved.errors) {
+        setErrors(solved.errors);
 
-			if(solved.user) {
-				redirect('/dashboard');
-			}
-		}
-		getResult();
-	}, [])
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+        }
+
+        setTimeout(() => {
+          setErrors([]);
+        }, 1500);
+        return;
+      }
+
+      if (solved.user) {
+        redirect('/dashboard');
+      }
+    }
+    getResult();
+  }, [])
 
   return (
-	<AuthContainer>
-		<AuthLayout authTitle="Iniciar Sesión" helpText="Ingresa tu correo y contraseña proporcionado">
-		</AuthLayout>
-	</AuthContainer>
+    <AuthContainer>
+      <AuthLayout authTitle="Iniciar Sesión" helpText="Ingresa tu correo y contraseña proporcionado">
+      </AuthLayout>
+    </AuthContainer>
   )
 }
 

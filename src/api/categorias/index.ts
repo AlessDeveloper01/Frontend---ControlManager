@@ -1,5 +1,8 @@
 import axios, { AxiosError } from "axios";
 
+export const dynamic = "force-dynamic"
+export const fetchCache = "force-no-store"
+
 export const createCategory = async (name: string) => {
     try {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/category/create`, { name }, {

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 'use client'
 
 import Select from 'react-select'
@@ -10,7 +12,7 @@ import { getAllCategories } from '@/src/api/categorias'
 import { useOptions } from '@/src/store/options/store'
 import { useProduct } from '@/src/store/product/store'
 import { getIngredientsAll } from '@/src/api/inventarios'
-import { createProduct, updateProduct } from '@/src/api/product'
+import { updateProduct } from '@/src/api/product'
 import { useRouter } from 'next/navigation'
 
 const FormEditProduct = () => {

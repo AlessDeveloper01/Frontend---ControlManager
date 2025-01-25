@@ -6,8 +6,8 @@ import { devtools } from 'zustand/middleware';
 export type GlobalStore = {
     errors: [];
     setErrors: (errors: []) => void;
-    sucess: [];
-    setSucess: (sucess: []) => void;
+    sucess: [{ msg: string }];
+    setSucess: (sucess: [{ msg: string }]) => void;
     modal: ({
         element: JSX.Element | null;
         status: boolean;
@@ -23,10 +23,10 @@ export type GlobalStore = {
 }
 
 export const useGlobal = create<GlobalStore>()(devtools((set) => ({
-    errors: [] as [],
-    sucess: [] as [],
+    errors: [],
+    sucess: [],
     setErrors: (errors: []) => set({ errors }),
-    setSucess: (sucess: []) => set({ sucess }),
+    setSucess: (sucess: [{ msg: string }]) => set({ sucess }),
     modal: {
         element: null as JSX.Element | null,
         status: false

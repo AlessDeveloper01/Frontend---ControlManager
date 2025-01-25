@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 "use client";
 
 import { getProductById } from "@/src/api/product";
@@ -131,7 +133,7 @@ const ProductVisualizer = () => {
                             setName(product.name);
                             setPrice(product.price);
                             setCategoryId(product.category.id);
-                            setIngredients(product.ingredients);
+                            setIngredients(product.ingredients.map(ingredient => ({ id: ingredient.id })));
                             setStatus(product.status);
                         }}
                         >

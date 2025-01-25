@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 'use client'
 
 import { useParams, useRouter } from 'next/navigation';
@@ -6,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useOrder } from '@/src/store/order/store';
 import { getOrderById } from '@/src/api/order';
 import { FormatAmount, FormatDateTime } from '@/src/helpers/format';
+import Image from 'next/image';
 
 const TicketOrder = () => {
     const params = useParams();
@@ -34,7 +37,7 @@ const TicketOrder = () => {
   return (
     <>
     <div className="ticket">
-        <img
+        <Image
             src="/image.png"
             alt="Logo"
             className="logo"

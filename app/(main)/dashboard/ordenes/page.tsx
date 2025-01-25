@@ -1,9 +1,14 @@
+'use client'
+
 import PageBreadcrumb from '@/src/components/Global/PageBreadcrumb'
-import TableOrders from '@/src/components/orders/TableOrders'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import React from 'react'
 
 const OrdenesPage = () => {
+
+  const Table = dynamic(() => import('@/src/components/orders/TableOrders'), { ssr: false })
+
   return (
     <>
       <PageBreadcrumb title="Ordenes" subName="Dashboard" />
@@ -22,7 +27,7 @@ const OrdenesPage = () => {
         </Link>
       </div>
 
-      <TableOrders />
+      <Table />
     </>
   )
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { getBoxById } from "@/src/api/box";
@@ -13,7 +14,6 @@ const OrderItem = () => {
     const { id } = useParams();
     const boxItem = useBoxStore((state) => state.boxItem);
     const setBoxItem = useBoxStore((state) => state.setBoxItem);
-
 
     useEffect(() => {
         const getProduct = async () => {

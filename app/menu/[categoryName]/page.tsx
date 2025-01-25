@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 'use client'
 
 import { getCategoryActives, getCategoryName } from '@/src/api/categorias'

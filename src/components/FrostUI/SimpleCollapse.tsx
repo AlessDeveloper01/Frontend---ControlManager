@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 'use client'
 
 import { ElementType, FC, RefObject, useRef } from 'react'
