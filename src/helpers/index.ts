@@ -21,7 +21,7 @@ export const validationToken = async (): Promise<any> => {
     // Solicitud al servidor para validar el token
     const response = await axios.get(`${apiUrl}/auth/me`, {
       headers: {
-        Authorization: `Bearer ${token}`, // Asegurar el formato estándar del token
+        Authorization: `${token}`, // Asegurar el formato estándar del token
       },
     });
     return response.data;
