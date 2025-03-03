@@ -1,5 +1,7 @@
 'use client';
 
+{/* CAJA, PERSONAL, PRODUCTOS, CATEGORIAS */}
+
 import ModalCloseCaja from '@/src/components/caja/ModalClose'
 import PageBreadcrumb from '@/src/components/Global/PageBreadcrumb'
 import { useGlobal } from '@/src/store/global/store'

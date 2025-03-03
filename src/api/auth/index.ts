@@ -92,3 +92,21 @@ export const updateUserPass = async (id: number, name: string, email: string, pe
         }
     }
 }
+
+export const getUser = async (token: string) => {
+    try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+                headers: {
+                    Authorization: `${token}`
+            }
+        })
+        
+        return response.data
+    } catch (error) {
+        if(error instanceof AxiosError) {
+            return error.response!.data;
+        } else {
+            return error
+        }
+    }
+}

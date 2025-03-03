@@ -5,6 +5,7 @@ import Preloader from "@/src/components/Global/Preloader";
 import React from "react";
 import { validationToken } from "@/src/helpers";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/src/store/auth/store";
 
 const Topbar = React.lazy(() => import('@/src/layouts/TopBar'))
 const LeftSideBar = React.lazy(() => import('@/src/layouts/LeftSideBar'))
@@ -13,17 +14,21 @@ const Footer = React.lazy(() => import('@/src/layouts/Footer'))
 const loading = () => <div />
 
 const validationAccountPersonal = async (router: ReturnType<typeof useRouter>) => {
+	const setUser = useAuth((state) => state.setUser);
 	const data = await validationToken();
 	if(data.errors && data.errors.length > 0) {
 		router.push('/auth/login');
 	}
+
+	setUser(data);
 }
 
 export default function DashboardLayout({
  children
 }: {
  children: React.ReactNode;
-}) {
+	}) {
+	const data = useAuth((state) => state.user);
 	const router = useRouter();
 	useEffect(() => {
 		validationAccountPersonal(router);
@@ -35,7 +40,7 @@ export default function DashboardLayout({
 				<div className="flex wrapper">
 					{
 						<Suspense fallback={loading()}>
-							<LeftSideBar hideUserProfile={true} isCondensed={true} isLight={false} />
+							<LeftSideBar hideUserProfile={true} isCondensed={true} isLight={false} data={data} />
 						</Suspense>
 					}
 

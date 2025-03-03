@@ -5,6 +5,7 @@ import SimpleBar from 'simplebar-react'
 import AppMenu from './Menu'
 import { getMenuItems } from '../helpers/menu'
 import LogoBox from '@/src/components/Global/LogoBox'
+import { User } from '../Objects'
 
 /* Sidebar content */
 const SideBarContent = () => {
@@ -19,7 +20,8 @@ interface LeftSideBarProps {
 	isCondensed: boolean
 	isLight: boolean
 	hideUserProfile: boolean
-	hideLogo?: boolean
+  hideLogo?: boolean
+  data: User
 }
 const LeftSideBar = ({ hideLogo }: LeftSideBarProps) => {
 
