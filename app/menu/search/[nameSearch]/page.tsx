@@ -2,7 +2,7 @@
 
 "use client";
 
-import { getCategoryActives, getCategoryName } from "@/src/api/categorias";
+import { getCategoryActives } from "@/src/api/categorias";
 import { createOrder, updateOrder } from "@/src/api/order";
 import { getProductsFindByName } from "@/src/api/product";
 import LogoBox from "@/src/components/Global/LogoBox";
@@ -184,7 +184,7 @@ const MenuSearchPage = () => {
             </div>
             {/* Productos */}
             <div className="overflow-y-auto h-[calc(100vh-120px)]">
-                <h1 className="text-left text-xl font-black mb-10 text-black uppercase text-amber-600">
+                <h1 className="text-left text-xl font-black mb-10 uppercase text-amber-600">
                     Productos encontrados de: {nameSearch}
                 </h1>
                 {(products ?? []).length > 0 ? (
