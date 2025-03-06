@@ -16,6 +16,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "framer-motion": "^11.18.1",
     "gridjs": "^6.2.0",
     "gridjs-react": "^6.1.1",
