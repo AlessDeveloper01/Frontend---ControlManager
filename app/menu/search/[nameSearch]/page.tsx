@@ -183,7 +183,7 @@ const MenuSearchPage = () => {
                 </div>
             </div>
             {/* Productos */}
-            <div className="overflow-y-auto h-[calc(100vh-120px)]">
+            <div className="overflow-y-auto h-[calc(100vh-120px)] mt-10">
                 <h1 className="text-left text-xl font-black mb-10 uppercase text-amber-600">
                     Productos encontrados de: {nameSearch}
                 </h1>
