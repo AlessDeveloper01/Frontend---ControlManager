@@ -102,3 +102,19 @@ export const updateProduct = async (id: number, name: string, price: number, cat
         }
     }
 }
+
+export const getProductsFindByName = async (name: string) => {
+    try {
+        const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/category//get-products/${name}`
+        );
+
+        return response.data;
+    } catch (error) {
+        if(error instanceof AxiosError) {
+            return error.response!.data;
+        } else {
+            console.error(error);
+        }
+    }
+ }

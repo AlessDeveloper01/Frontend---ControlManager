@@ -4,6 +4,7 @@
 
 import { getCategoryActives, getCategoryName } from "@/src/api/categorias";
 import { createOrder, updateOrder } from "@/src/api/order";
+import { getProductsFindByName } from "@/src/api/product";
 import LogoBox from "@/src/components/Global/LogoBox";
 import DeleteMenu from "@/src/components/menu/Delete";
 import { FormatAmount } from "@/src/helpers/format";
@@ -11,19 +12,18 @@ import { OrderItemAPIList } from "@/src/Objects";
 import { useGlobal } from "@/src/store/global/store";
 import { useMenu } from "@/src/store/menu/store";
 import { useOrder } from "@/src/store/order/store";
+import { useMenuSearch } from "@/src/store/searchmenu";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import {useMenuSearch} from '@/src/store/searchmenu/index';
 
-const MenuPage = () => {
-    const router = useRouter();
-    const { categoryName } = useParams();
+const MenuSearchPage = () => {
+    const { nameSearch } = useParams();
     const categoriesMenu = useMenu((state) => state.categories);
     const setCategoriesMenu = useMenu((state) => state.setCategories);
-    const products = useMenu((state) => state.products);
-    const setProducts = useMenu((state) => state.setProducts);
+    const products = useMenuSearch((state) => state.products);
+    const setProducts = useMenuSearch((state) => state.setProducts);
     const order = useMenu((state) => state.order);
     const addItem = useMenu((state) => state.addItem);
     const removeItem = useMenu((state) => state.removeItem);
@@ -37,9 +37,6 @@ const MenuPage = () => {
     const idOrden = useOrder((state) => state.id);
     const setIdOrden = useOrder((state) => state.setId);
 
-    const name = useMenuSearch((state) => state.name);
-    const setName = useMenuSearch((state) => state.setName);
-
     useEffect(() => {
         const getCategories = async () => {
             const response = await getCategoryActives();
@@ -50,13 +47,13 @@ const MenuPage = () => {
 
     useEffect(() => {
         const getProducts = async () => {
-            if (typeof categoryName === "string") {
-                const response = await getCategoryName(categoryName);
+            if (typeof nameSearch === "string") {
+                const response = await getProductsFindByName(nameSearch);
                 setProducts(response);
             }
         };
         getProducts();
-    }, [categoryName]);
+    }, [nameSearch]);
 
     const handleCreateOrder = async () => {
         const parsedOrder = OrderItemAPIList.parse(order);
@@ -137,10 +134,6 @@ const MenuPage = () => {
         }
     };
 
-    const searchProducts = async () => {
-        router.push(`/menu/search/${name}`);
-    }
-
     return (
         <main className="grid grid-cols-1 lg:grid-cols-[1fr,2fr,1fr] gap-4 mx-auto bg-gray-100 p-3 dark:bg-gray-800 rounded relative overflow-y-auto min-h-screen h-[calc(100vh-20px)] overflow-hidden">
             {/* Menu Categorias */}
@@ -154,15 +147,6 @@ const MenuPage = () => {
                             type="search"
                             placeholder="Buscar"
                             className="p-2 bg-gray-200 dark:bg-gray-800 border border-gray-300 w-full"
-                            value={name}
-                            onChange={(e) => {
-                                setName(e.target.value);
-                            }}
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                    searchProducts();
-                                }
-                            }}
                         />
                     </div>
                     <div className="flex justify-center items-center bg-gray-200/20 dark:bg-gray-800 lg:p-4 p-2 rounded-md">
@@ -180,11 +164,7 @@ const MenuPage = () => {
                             <Link
                                 key={index}
                                 href={`/menu/${category.name.toLowerCase()}`}
-                                className={`${
-                                    categoryName === category.name.toLowerCase()
-                                        ? "bg-indigo-100 dark:bg-gray-700"
-                                        : "bg-white dark:bg-gray-800"
-                                } border border-indigo-600 gap-4 px-1 py-2 rounded-md`}>
+                                className={`bg-indigo-100 dark:bg-gray-700 border border-indigo-600 gap-4 px-1 py-2 rounded-md`}>
                                 <div className="flex justify-center items-center gap-2">
                                     <Image
                                         src={`/logos/icon_${category.name.toLowerCase()}.svg`}
@@ -193,12 +173,7 @@ const MenuPage = () => {
                                         height={50}
                                     />
                                     <p
-                                        className={`text-center font-black text-xl ${
-                                            categoryName ===
-                                            category.name.toLowerCase()
-                                                ? "text-amber-600"
-                                                : "text-black"
-                                        }`}>
+                                        className={`text-center font-black text-xl uppercase text-indigo-600`}>
                                         {category.name}
                                     </p>
                                 </div>
@@ -210,11 +185,11 @@ const MenuPage = () => {
             {/* Productos */}
             <div className="overflow-y-auto h-[calc(100vh-120px)]">
                 <h1 className="text-left text-xl font-black mb-10 text-black uppercase text-amber-600">
-                    Productos de la categoria {categoryName}
+                    Productos encontrados de: {nameSearch}
                 </h1>
-                {(products.products ?? []).length > 0 ? (
+                {(products ?? []).length > 0 ? (
                     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
-                        {products.products?.map((product, index) => (
+                        {products?.map((product, index) => (
                             <button
                                 key={index}
                                 className="bg-white dark:bg-gray-900 p-4 rounded-md hover:bg-amber-200 dark:hover:bg-gray-700 flex items-center gap-2 flex-col"
@@ -411,4 +386,4 @@ const MenuPage = () => {
 };
 
 
-export default MenuPage;
+export default MenuSearchPage;

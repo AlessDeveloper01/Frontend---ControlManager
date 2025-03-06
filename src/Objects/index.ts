@@ -213,88 +213,6 @@ export const OrderItemMenu = z.object({
 export type OrderItemMenuType = z.infer<typeof OrderItemMenu>;
 export type OrderItemIndividualType = z.infer<typeof OrderItemIndividual>;
 
-/* 
-    createdAt
-: 
-"2025-01-25T03:40:35.873Z"
-date
-: 
-"2025-01-25T03:40:35.872Z"
-id
-: 
-28
-name
-: 
-"Alessandro Mesero"
-related_products
-: 
-Array(1)
-0
-: 
-BoxProduct
-: 
-boxId
-: 
-28
-createdAt
-: 
-"2025-01-25T03:40:35.939Z"
-price
-: 
-200
-productId
-: 
-2
-quantity
-: 
-10
-total
-: 
-2000
-updatedAt
-: 
-"2025-01-25T03:40:35.939Z"
-[[Prototype]]
-: 
-Object
-categoryId
-: 
-4
-createdAt
-: 
-"2025-01-16T01:55:31.504Z"
-id
-: 
-2
-name
-: 
-"Mojarra al ajo con cecina"
-price
-: 
-200
-status
-: 
-true
-updatedAt
-: 
-"2025-01-23T01:25:49.352Z"
-[[Prototype]]
-: 
-Object
-length
-: 
-1
-[[Prototype]]
-: 
-Array(0)
-total
-: 
-2000
-updatedAt
-: 
-"2025-01-25T03:40:35.873Z"
-*/
-
 export const BoxProduct = z.object({
     boxId: z.number(),
     createdAt: z.string(),
@@ -337,3 +255,17 @@ export const BoxProductAPI = z.object({
 });
 
 export type BoxProductAPIType = z.infer<typeof BoxProductAPI>;
+
+export const SearchProduct = z.object({
+    id: z.number(),
+    name: z.string(),
+    price: z.number(),
+    status: z.boolean(),
+    categoryId: z.number(),
+    createdAt: z.string(),
+    updatedAt: z.string()
+});
+
+export const SearchProductList = z.array(SearchProduct);
+export type SearchProductType = z.infer<typeof SearchProduct>;
+export type SearchProductListType = z.infer<typeof SearchProductList>;
