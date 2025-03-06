@@ -140,11 +140,25 @@ const TableProduct = () => {
             </div>
 
             <div className="flex justify-center gap-2 mt-4">
-                {Array.from({ length: products.totalPages || 0 }, (_, i) => (
-                    <button key={i+1} onClick={() => setPage(i+1)}
-                        className={`btn bg-primary text-white ${page === i+1 ? 'bg-opacity-50' : ''}`}
-                    >{i+1}</button>
-                ))}
+                {page > 1 && (
+                    <>
+                        <button onClick={() => setPage(1)} className="btn bg-primary text-white">1</button>
+                        {page > 3 && <span className="text-gray-500">...</span>}
+                    </>
+                )}
+                {Array.from({ length: products.totalPages || 0 }, (_, i) => i + 1)
+                    .filter(p => p === page || (p >= page - 1 && p <= page + 1) || p > products.totalPages - 2)
+                    .map(p => (
+                        <button key={p} onClick={() => setPage(p)}
+                            className={`btn bg-primary text-white ${page === p ? 'bg-opacity-50' : ''}`}
+                        >{p}</button>
+                    ))}
+                {page < products.totalPages - 1 && (
+                    <>
+                        {page < products.totalPages - 2 && <span className="text-gray-500">...</span>}
+                        <button onClick={() => setPage(products.totalPages)} className="btn bg-primary text-white">{products.totalPages}</button>
+                    </>
+                )}
             </div>
     </>
   )
