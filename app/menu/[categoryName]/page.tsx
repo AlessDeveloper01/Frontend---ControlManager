@@ -167,11 +167,11 @@ const MenuPage = () => {
                         />
                     </div>
                     <div className="flex justify-center items-center bg-gray-200/20 dark:bg-gray-800 lg:p-4 p-2 rounded-md">
-                        <Link
+                        <a
                             href="/dashboard/ordenes"
                             className="btn bg-primary text-white w-full uppercase font-bold">
                             Listado de Ordenes
-                        </Link>
+                        </a>
                     </div>
                     <h1 className="text-2xl font-black uppercase text-indigo-600 text-center">
                         Categorias
