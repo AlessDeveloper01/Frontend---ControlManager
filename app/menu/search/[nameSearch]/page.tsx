@@ -170,7 +170,8 @@ const MenuSearchPage = () => {
                     <div className="flex justify-center items-center bg-gray-200/20 dark:bg-gray-800 lg:p-4 p-2 rounded-md">
                         <Link
                             href="/dashboard/ordenes"
-                            className="btn bg-primary text-white w-full uppercase font-bold">
+                            className="btn bg-primary text-white w-full uppercase font-bold"
+                            onClick={() => router.refresh()}>
                             Listado de Ordenes
                         </Link>
                     </div>
