@@ -36,6 +36,16 @@ export default function DashboardLayout({
     const router = useRouter();
     useEffect(() => {
         validationAccountPersonal(router, setUser);
+
+        const handlePopState = () => {
+            validationAccountPersonal(router, setUser);
+        };
+
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
     }, [router, setUser]);
 
     return (
