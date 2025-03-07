@@ -139,6 +139,7 @@ const MenuPage = () => {
 
     const searchProducts = async () => {
         router.push(`/menu/search/${name}`);
+        setName("");
     }
 
     return (

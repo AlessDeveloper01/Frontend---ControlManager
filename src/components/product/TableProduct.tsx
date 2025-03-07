@@ -143,7 +143,7 @@ const TableProduct = () => {
                 {page > 1 && (
                     <>
                         <button onClick={() => setPage(1)} className="btn bg-primary text-white">1</button>
-                        {page > 3 && <span className="text-gray-500">...</span>}
+                        {page > 3 && <span className="text-blue-500">...</span>}
                     </>
                 )}
                 {Array.from({ length: products.totalPages || 0 }, (_, i) => i + 1)
@@ -155,7 +155,7 @@ const TableProduct = () => {
                     ))}
                 {page < products.totalPages - 1 && (
                     <>
-                        {page < products.totalPages - 2 && <span className="text-gray-500">...</span>}
+                        {page < products.totalPages - 2 && <span className="text-blue-500">...</span>}
                         <button onClick={() => setPage(products.totalPages)} className="btn bg-primary text-white">{products.totalPages}</button>
                     </>
                 )}

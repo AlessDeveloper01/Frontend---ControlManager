@@ -15,10 +15,11 @@ import { useOrder } from "@/src/store/order/store";
 import { useMenuSearch } from "@/src/store/searchmenu";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const MenuSearchPage = () => {
+    const router = useRouter();
     const { nameSearch } = useParams();
     const categoriesMenu = useMenu((state) => state.categories);
     const setCategoriesMenu = useMenu((state) => state.setCategories);
@@ -36,6 +37,9 @@ const MenuSearchPage = () => {
     const setToast = useGlobal((state) => state.setToast);
     const idOrden = useOrder((state) => state.id);
     const setIdOrden = useOrder((state) => state.setId);
+
+    const name = useMenuSearch((state) => state.name);
+    const setName = useMenuSearch((state) => state.setName);
 
     useEffect(() => {
         const getCategories = async () => {
@@ -134,6 +138,11 @@ const MenuSearchPage = () => {
         }
     };
 
+    const searchProducts = async () => {
+        router.push(`/menu/search/${name}`);
+        setName("");
+    }
+
     return (
         <main className="grid grid-cols-1 lg:grid-cols-[1fr,2fr,1fr] gap-4 mx-auto bg-gray-100 p-3 dark:bg-gray-800 rounded relative overflow-y-auto min-h-screen h-[calc(100vh-20px)] overflow-hidden">
             {/* Menu Categorias */}
@@ -147,6 +156,15 @@ const MenuSearchPage = () => {
                             type="search"
                             placeholder="Buscar"
                             className="p-2 bg-gray-200 dark:bg-gray-800 border border-gray-300 w-full"
+                            value={name}
+                            onChange={(e) => {
+                                setName(e.target.value);
+                            }}
+                            onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                    searchProducts();
+                                }
+                            }}
                         />
                     </div>
                     <div className="flex justify-center items-center bg-gray-200/20 dark:bg-gray-800 lg:p-4 p-2 rounded-md">
