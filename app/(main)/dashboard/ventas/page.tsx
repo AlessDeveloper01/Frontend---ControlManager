@@ -9,7 +9,7 @@ const VentasFinalizadas = () => {
       <PageBreadcrumb title="Ventas Finalizadas" subName="Dashboard" />
       <div className='flex justify-between flex-col md:flex-row gap-4'>
         <Link
-          href='/menu/postres'
+          href='/menu'
           className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded uppercase'
         >
           Crear orden
