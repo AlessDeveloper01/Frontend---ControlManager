@@ -71,6 +71,10 @@ const OrderItemVenta = () => {
                         Mesero a cargo:{" "}
                         <span className="font-black">{order.mesero}</span>
                     </p>
+                    <p className="mt-1 text-gray-800 dark:text-gray-400 mb-3">
+                        Mesa:{" "}
+                        <span className="font-black">{order.numTable}</span>
+                    </p>
                     <p className="mt-1 text-gray-800 dark:text-gray-400 mb-3 flex items-center gap-2">
                         Estado del pedido:{" "}
                         <span className="font-black">

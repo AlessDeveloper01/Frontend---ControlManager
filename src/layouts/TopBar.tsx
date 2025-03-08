@@ -11,21 +11,31 @@ import { useGlobal } from '../store/global/store';
 
 const Menu = ({ onLinkClick }: { onLinkClick: () => void }) => {
   const items = getMenuItems();
+  const user = useAuth((state) => state.user);
+  const { permission } = user;
 
   return (
     <nav className="bg-white shadow-md p-4 md:p-8 min-h-screen list-none">
-      {items.map((item, index) =>
-        item.children ? (
+      {items.map((item, index) => {
+        if (item.role !== "All" && item.role !== permission) {
+            return null;
+        }
+        return item.children ? (
           <li key={index} className="flex items-end">
             <ul className="list-none">
-              {item.children.map((child, idx) => (
-                <li
-                  key={idx}
-                  className="gap-3.5 text-gray-700 hover:text-primary-500 text-2xl sm:text-lg"
-                >
-                  {child.url && linkTemplate(child.url, child.icon!, child.label, onLinkClick)}
-                </li>
-              ))}
+              {item.children.map((child, idx) => {
+                if (permission !== 'Administrador' && child.role !== 'All') {
+                  return null;
+                }
+                return (
+                  <li
+                    key={idx}
+                    className="gap-3.5 text-gray-700 hover:text-primary-500 text-2xl sm:text-lg"
+                  >
+                    {child.url && linkTemplate(child.url, child.icon!, child.label, onLinkClick)}
+                  </li>
+                );
+              })}
             </ul>
           </li>
         ) : item.isTitle ? (
@@ -42,8 +52,8 @@ const Menu = ({ onLinkClick }: { onLinkClick: () => void }) => {
           >
             {item.url && linkTemplate(item.url, item.icon!, item.label, onLinkClick)}
           </li>
-        )
-      )}
+        );
+      })}
     </nav>
   );
 };

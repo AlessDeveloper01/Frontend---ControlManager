@@ -4,10 +4,11 @@ import axios, { AxiosError } from "axios";
 export const dynamic = "force-dynamic"
 export const fetchCache = "force-no-store"
 
-export const createOrder = async (order: OrderItemAPIListType) => {
+export const createOrder = async (order: OrderItemAPIListType, numMesa: number) => {
     try {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/order/create`, {
-            products: order
+            products: order,
+            table: numMesa
         }, {
             headers: {
                 Authorization: `${localStorage.getItem('token')}`

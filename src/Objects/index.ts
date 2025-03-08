@@ -194,7 +194,8 @@ export const OrderItemIndividual = z.object({
     products: z.array(ProductItem),
     status: z.boolean(),
     total: z.number(),
-    updatedAt: z.string()
+    updatedAt: z.string(),
+    numTable: z.number()
 });
 
 export const OrderItemMenu = z.object({
@@ -203,6 +204,7 @@ export const OrderItemMenu = z.object({
     finishDate: z.string().optional(),
     id: z.number(),
     mesero: z.string(),
+    numTable: z.number(),
     methodPayment: z.string().optional(),
     products: z.array(ProductItem),
     status: z.boolean(),

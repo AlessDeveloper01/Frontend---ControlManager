@@ -51,6 +51,7 @@ const OrderItem = () => {
             updatedAt: product.updatedAt,
             name: product.name,
             categoryId: product.categoryId,
+            numTable: order.numTable,
         };
     });
 
@@ -87,6 +88,9 @@ const OrderItem = () => {
                     <p className="mt-1 text-gray-800 dark:text-gray-400 mb-3">
                         Mesero a cargo:{" "}
                         <span className="font-black">{order.mesero}</span>
+                    </p>
+                    <p className="mt-1 text-gray-800 dark:text-gray-400 mb-3">
+                        Mesa: <span className="font-black">{order.numTable}</span>
                     </p>
                     <p className="mt-1 text-gray-800 dark:text-gray-400 mb-3 flex items-center gap-2">
                         Estado del pedido:{" "}
@@ -136,7 +140,7 @@ const OrderItem = () => {
                         >
                             Finalizar Orden
                         </button>
-                        <Link className={`btn bg-warning text-white mt-2 w-full`} href={`/menu/postres`} onClick={() => {
+                        <Link className={`btn bg-warning text-white mt-2 w-full`} href={`/menu/mesa/${order.numTable}/category/postres`} onClick={() => {
                             setOrderMenu(parsedOrderMenu);
                             setId(order.id);
                         }}>

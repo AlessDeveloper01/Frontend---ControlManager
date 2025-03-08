@@ -19,7 +19,7 @@ import {useMenuSearch} from '@/src/store/searchmenu/index';
 
 const MenuPage = () => {
     const router = useRouter();
-    const { categoryName } = useParams();
+    const { categoryName, numMesa } = useParams();
     const categoriesMenu = useMenu((state) => state.categories);
     const setCategoriesMenu = useMenu((state) => state.setCategories);
     const products = useMenu((state) => state.products);
@@ -58,12 +58,14 @@ const MenuPage = () => {
         getProducts();
     }, [categoryName]);
 
+    const numeroMesa = parseInt(Array.isArray(numMesa) ? numMesa[0] : numMesa);
+
     const handleCreateOrder = async () => {
         const parsedOrder = OrderItemAPIList.parse(order);
-        const response = await createOrder(parsedOrder);
+        const response = await createOrder(parsedOrder, numeroMesa);
         if (response.errors && response.errors.length > 0) {
             setToast({ status: true, type: "error", message: "Ocurrio un error" });
-
+            console.log(response.errors);
             setTimeout(() => {
                 setToast({ status: false, type: "error", message: "" });
             }, 1000);
@@ -138,7 +140,7 @@ const MenuPage = () => {
     };
 
     const searchProducts = async () => {
-        router.push(`/menu/search/${name}`);
+        router.push(`/menu/mesa/${numMesa}/search/${name}`);
         setName("");
     }
 
@@ -160,7 +162,7 @@ const MenuPage = () => {
                                 setName(e.target.value);
                             }}
                             onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
+                                if (e.key === "Enter") {
                                     searchProducts();
                                 }
                             }}
@@ -181,7 +183,7 @@ const MenuPage = () => {
                         {categoriesMenu.map((category, index) => (
                             <Link
                                 key={index}
-                                href={`/menu/${category.name.toLowerCase()}`}
+                                href={`/menu/mesa/${numMesa}/category/${category.name.toLowerCase()}`}
                                 className={`${
                                     categoryName === category.name.toLowerCase()
                                         ? "bg-indigo-100 dark:bg-gray-700"
@@ -189,7 +191,9 @@ const MenuPage = () => {
                                 } border border-indigo-600 gap-4 px-1 py-2 rounded-md`}>
                                 <div className="flex justify-center items-center gap-2">
                                     <Image
-                                        src={`/logos/icon_${category.name.toLowerCase()}.svg`}
+                                        src={`/logos/icon_${
+                                            category.name.toLowerCase().split(" ")[0]
+                                        }.svg`}
                                         alt={category.name}
                                         width={50}
                                         height={50}
