@@ -271,3 +271,11 @@ export const SearchProduct = z.object({
 export const SearchProductList = z.array(SearchProduct);
 export type SearchProductType = z.infer<typeof SearchProduct>;
 export type SearchProductListType = z.infer<typeof SearchProductList>;
+
+export const boxPreview = z.object({
+    id: z.number(),
+    name: z.string(),
+    totalQuantity: z.number(),
+    totalPrice: z.number()
+}).array();
+export type BoxPreviewType = z.infer<typeof boxPreview>;

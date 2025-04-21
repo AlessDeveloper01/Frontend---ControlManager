@@ -8,6 +8,7 @@ import { getProductsFindByName } from "@/src/api/product";
 import LogoBox from "@/src/components/Global/LogoBox";
 import DeleteMenu from "@/src/components/menu/Delete";
 import { FormatAmount } from "@/src/helpers/format";
+import LogoContainer from "@/src/helpers/logo-container";
 import { OrderItemAPIList } from "@/src/Objects";
 import { useGlobal } from "@/src/store/global/store";
 import { useMenu } from "@/src/store/menu/store";
@@ -17,6 +18,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ModalCart from '@/src/components/menu/ModalCart';
 
 const MenuSearchPage = () => {
     const router = useRouter();
@@ -78,6 +80,7 @@ const MenuSearchPage = () => {
             type: "success",
             message: "Orden realizada con exito",
         });
+        router.push(`/dashboard/ordenes/${response.idOrden}`);
 
         setTimeout(() => {
             setToast({ status: false, type: "success", message: "" });
@@ -141,6 +144,9 @@ const MenuSearchPage = () => {
     };
 
     const searchProducts = async () => {
+         if (name.trim() === "") {
+             return;
+         }
         router.push(`/menu/mesa/${numMesa}/search/${name}`);
         setName("");
     }
@@ -151,7 +157,7 @@ const MenuSearchPage = () => {
             <div className="flex flex-col gap-4 overflow-y-auto h-[calc(100vh-200px)] md:h-[calc(100vh-90px)] bg-gray-100 dark:bg-gray-800 p-3 rounded">
                 <div className="grid grid-cols-1 gap-4 grid-rows-[auto, auto, auto, 1fr] overflow-y-auto">
                     <div className="flex justify-center items-center bg-gray-200/20 dark:bg-gray-800 lg:p-4 p-2 rounded-md h-20">
-                        <LogoBox />
+                        <LogoContainer />
                     </div>
                     <div className="flex justify-center items-center bg-gray-200/20 dark:bg-gray-800 lg:p-4 p-2 rounded-md">
                         <input
@@ -168,6 +174,11 @@ const MenuSearchPage = () => {
                                 }
                             }}
                         />
+                        <button
+                            className="btn bg-primary text-white ms-2"
+                            onClick={searchProducts}>
+                            <i className="ri-search-line"></i> Buscar
+                        </button>
                     </div>
                     <div className="flex justify-center items-center bg-gray-200/20 dark:bg-gray-800 lg:p-4 p-2 rounded-md">
                         <Link
@@ -188,7 +199,9 @@ const MenuSearchPage = () => {
                                 className={`bg-indigo-100 dark:bg-gray-700 border border-indigo-600 gap-4 px-1 py-2 rounded-md`}>
                                 <div className="flex justify-center items-center gap-2">
                                     <Image
-                                        src={`/logos/icon_${category.name.toLowerCase().split(" ")[0]}.svg`}
+                                        src={`/logos/icon_${
+                                            category.name.toLowerCase().split(" ")[0]
+                                        }.svg`}
                                         alt={category.name}
                                         width={50}
                                         height={50}
@@ -402,6 +415,15 @@ const MenuSearchPage = () => {
                         isAtBottom ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"
                     }></i>
             </button>
+
+            <button
+                className="btn bg-amber-600 text-white fixed bottom-4 left-4 lg:hidden py-2"
+                onClick={() => setModal({ status: true, element: <ModalCart /> })}
+            >
+                <i className="ri-shopping-cart-2-line w-full text-xl"></i>
+            </button>
+
+            {modal.status && modal.element}
         </main>
     );
 };

@@ -16,6 +16,8 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {useMenuSearch} from '@/src/store/searchmenu/index';
+import LogoContainer from "@/src/helpers/logo-container";
+import ModalCart from "@/src/components/menu/ModalCart";
 
 const MenuPage = () => {
     const router = useRouter();
@@ -64,7 +66,7 @@ const MenuPage = () => {
         const parsedOrder = OrderItemAPIList.parse(order);
         const response = await createOrder(parsedOrder, numeroMesa);
         if (response.errors && response.errors.length > 0) {
-            setToast({ status: true, type: "error", message: "Ocurrio un error" });
+            setToast({ status: true, type: "error", message: "Ocurrio un error (Mesa ocupada)" });
             console.log(response.errors);
             setTimeout(() => {
                 setToast({ status: false, type: "error", message: "" });
@@ -77,6 +79,7 @@ const MenuPage = () => {
             type: "success",
             message: "Orden realizada con exito",
         });
+        router.push(`/dashboard/ordenes/${response.idOrden}`);
 
         setTimeout(() => {
             setToast({ status: false, type: "success", message: "" });
@@ -140,6 +143,9 @@ const MenuPage = () => {
     };
 
     const searchProducts = async () => {
+        if (name.trim() === "") {
+            return;
+        }
         router.push(`/menu/mesa/${numMesa}/search/${name}`);
         setName("");
     }
@@ -148,9 +154,8 @@ const MenuPage = () => {
         <main className="grid grid-cols-1 lg:grid-cols-[1fr,2fr,1fr] gap-4 mx-auto bg-gray-100 p-3 dark:bg-gray-800 rounded relative overflow-y-auto min-h-screen h-[calc(100vh-20px)] overflow-hidden">
             {/* Menu Categorias */}
             <div className="flex flex-col gap-4 overflow-y-auto h-[calc(100vh-200px)] md:h-[calc(100vh-90px)] bg-gray-100 dark:bg-gray-800 p-3 rounded">
-                <div className="grid grid-cols-1 gap-4 grid-rows-[auto, auto, auto, 1fr] overflow-y-auto">
                     <div className="flex justify-center items-center bg-gray-200/20 dark:bg-gray-800 lg:p-4 p-2 rounded-md h-20">
-                        <LogoBox />
+                        <LogoContainer />
                     </div>
                     <div className="flex justify-center items-center bg-gray-200/20 dark:bg-gray-800 lg:p-4 p-2 rounded-md">
                         <input
@@ -167,6 +172,11 @@ const MenuPage = () => {
                                 }
                             }}
                         />
+                        <button
+                            className="btn bg-primary text-white ms-2"
+                            onClick={searchProducts}>
+                            <i className="ri-search-line"></i> Buscar
+                        </button>
                     </div>
                     <div className="flex justify-center items-center bg-gray-200/20 dark:bg-gray-800 lg:p-4 p-2 rounded-md">
                         <Link
@@ -176,6 +186,7 @@ const MenuPage = () => {
                             Listado de Ordenes
                         </Link>
                     </div>
+                <div className="grid grid-cols-1 gap-4 grid-rows-[auto, auto, auto, 1fr] overflow-y-auto">
                     <h1 className="text-2xl font-black uppercase text-indigo-600 text-center">
                         Categorias
                     </h1>
@@ -365,8 +376,6 @@ const MenuPage = () => {
                                 </button>
                             )}
                         </div>
-
-                        {modal.status && modal.element}
                     </div>
                 ) : (
                     <div className="text-center">
@@ -409,9 +418,18 @@ const MenuPage = () => {
                 onClick={toggleScroll}>
                 <i
                     className={
-                        isAtBottom ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"
+                        isAtBottom ? "ri-arrow-up-s-line text-xl" : "ri-arrow-down-s-line text-xl"
                     }></i>
             </button>
+
+            <button
+                className="btn bg-amber-600 text-white fixed bottom-4 left-4 lg:hidden py-2"
+                onClick={() => setModal({ status: true, element: <ModalCart /> })}
+            >
+                <i className="ri-shopping-cart-2-line w-full text-xl"></i>
+            </button>
+
+            {modal.status && modal.element}
         </main>
     );
 };

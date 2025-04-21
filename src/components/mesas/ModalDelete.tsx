@@ -1,46 +1,32 @@
 'use client';
 
-import React from 'react'
 import ModalLayout from '../HeadlessUI/ModalLayout'
 import { useGlobal } from '@/src/store/global/store';
 import { ErrorSchema } from '@/src/Objects';
-import Select from 'react-select';
-import { useRouter } from 'next/navigation';
-import { useOrder } from '@/src/store/order/store';
-import { finishOrder } from '@/src/api/order';
+import { deleteCategory } from '@/src/api/categorias';
+import { useTables } from '@/src/store/tables';
+import { deleteTable } from '@/src/api/table';
 
-const options = [
-    {
-        value: 'efectivo',
-        label: 'Efectivo'
-    },
-    {
-        value: 'tarjeta',
-        label: 'Tarjeta'
-    }
-]
-
-const ModalFinishOrder = () => {
-    const idOrder = useOrder((state) => state.id);
-    const setId = useOrder((state) => state.setId);
-    const payment = useOrder((state) => state.payment);
-    const setPayment = useOrder((state) => state.setPayment);
+const ModalDeleteTable = () => {
+    const id = useTables(state => state.id)
+    const setId = useTables(state => state.setId)
     const setModal = useGlobal(state => state.setModal);
     const setErrors = useGlobal(state => state.setErrors);
     const errors = useGlobal(state => state.errors);
     const setSuccess = useGlobal(state => state.setSucess as (success: { msg: string }[]) => void);
     const sucess = useGlobal(state => state.sucess);
-    const navigate = useRouter();
 
     const handleCloseModal = () => {
         setModal({ status: false, element: null })
         setId(0)
-        setPayment('')
+        setErrors([])
+        setSuccess([])
     }
 
     const handleDelete = async () => {
-        const response = await finishOrder(idOrder, payment);
-        if(response.errors && response.errors.length > 0) {
+        const response = await deleteTable(id);
+        console.log(response)
+        if (response.errors && response.errors.length > 0) {
             setErrors(response.errors);
 
             setTimeout(() => {
@@ -49,16 +35,14 @@ const ModalFinishOrder = () => {
             return;
         }
         
-        setSuccess([{ msg: 'Orden finalizada correctamente' }]);
+        setSuccess([{ msg: 'Mesa eliminada totalmente' }]);
         setTimeout(() => {
             setSuccess([]);
             handleCloseModal();
-            navigate.push('/dashboard/ordenes');
         }, 1500);
     }
 
     const errorsParsed = ErrorSchema.parse(errors);
-    
   return (
     <ModalLayout
             showModal={true}
@@ -67,9 +51,9 @@ const ModalFinishOrder = () => {
             placement="justify-center items-start">
             <div className="duration-300 ease-in-out transition-all  m-3 sm:mx-auto flex flex-col bg-white shadow-sm rounded dark:bg-gray-800 dark:border-gray-700">
                 <div
-                    className={`flex justify-between items-center py-2.5 px-4 bg-success/90 dark:border-gray-700`}>
+                    className={`flex justify-between items-center py-2.5 px-4 bg-danger/90 dark:border-gray-700`}>
                     <h3 className="font-medium text-white text-lg">
-                        Finalizar Orden
+                       Eliminar Mesa
                     </h3>
                     <button
                         className="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 dark:text-gray-200"
@@ -78,7 +62,7 @@ const ModalFinishOrder = () => {
                         <i className="ri-close-line text-2xl text-white"></i>
                     </button>
                 </div>
-                <div className={`p-4 bg-success text-white overflow-y-auto`}>
+                <div className={`p-4 bg-danger text-white overflow-y-auto`}>
                 {
                     errorsParsed.length > 0 && (
                         <div className="mb-6">
@@ -88,7 +72,7 @@ const ModalFinishOrder = () => {
                                         <div className="flex items-center gap-1.5">
                                             <i className={`ri-close-circle-line text-base`}></i>
                                             <p className="text-sm">
-                                                Error: <span className="font-bold">{error.msg || error.message}</span>
+                                                Error: <span className="font-bold">{error.message || error.msg}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -110,31 +94,16 @@ const ModalFinishOrder = () => {
                     )
                 }
                     <h5 className="mb-2.5 text-base">
-                        ¿Estás seguro de finalizar la orden?
+                        ¿Estas seguro de eliminar la mesa?
                     </h5>
                     <p className="text-sm mb-4">
-                        Al finalizar la orden no podrás hacer cambios en ella.
+                      Una mesa eliminada no se puede recuperar. Si deseas eliminarla, por favor confirma la acción.
+                      <hr className="my-2" />
+                    <span className="text-white font-bold">Nota:</span> Solo puedes eliminar una mesa si no tiene pedidos.
                     </p>
                 </div>
-
                 <div
-                    className='bg-success'>
-                    <div className="flex flex-col p-4">
-                        <label
-                            className="text-sm font-semibold text-gray-800 dark:text-gray-200"
-                            htmlFor="payment">
-                            Método de pago
-                        </label>
-                        <Select 
-                            options={options}
-                            value={options.find(option => option.value === payment)}
-                            onChange={(option) => setPayment(option!.value)}
-                        />
-                    </div>
-                </div>
-
-                <div
-                    className={`flex justify-end items-center gap-2 p-4 border-t bg-success border-white/5`}>
+                    className={`flex justify-end items-center gap-2 p-4 border-t bg-danger border-white/5`}>
                     <button
                         className="btn bg-light text-gray-800 transition-all"
                         onClick={handleCloseModal}>
@@ -143,7 +112,7 @@ const ModalFinishOrder = () => {
                     <button
                         className="btn border-light hover:bg-light hover:text-gray-800 text-white"
                         onClick={handleDelete}>
-                        Finalizar
+                        Eliminar Mesa
                     </button>
                 </div>
             </div>
@@ -151,4 +120,4 @@ const ModalFinishOrder = () => {
   )
 }
 
-export default ModalFinishOrder
+export default ModalDeleteTable

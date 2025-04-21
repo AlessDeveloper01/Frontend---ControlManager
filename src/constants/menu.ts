@@ -113,9 +113,25 @@ const MENU_ITEMS: MenuItemTypes[] = [
         role: "Administrador",
     },
     {
+        key: "mesas",
+        label: "Mesas",
+        isTitle: false,
+        icon: "ri-table-line",
+        url: "/dashboard/mesas",
+        role: "Administrador",
+    },
+    {
         key: "menutitle",
         label: "Menu",
         isTitle: true,
+    },
+    {
+        key: "listaordenes",
+        label: "Lista Ordenes",
+        isTitle: false,
+        icon: "ri-file-list-3-line",
+        url: "/dashboard/all",
+        role: "All",
     },
     {
         key: "menu",

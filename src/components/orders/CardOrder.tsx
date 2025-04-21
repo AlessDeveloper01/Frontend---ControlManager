@@ -1,46 +1,32 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 "use client";
 
-import { getOrderById } from "@/src/api/order";
+import React from "react";
 import ModalDeleteOrder from "@/src/components/orders/ModalDeleteOrder";
 import ModalFinishOrder from "@/src/components/orders/ModalFinishOrder";
 import { FormatAmount, FormatDateTime } from "@/src/helpers/format";
 import { FormatStatePlatillo } from "@/src/helpers/format-element";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { OrderItemIndividualType } from "@/src/Objects/index";
 import { useGlobal } from "@/src/store/global/store";
 import { useMenu } from "@/src/store/menu/store";
 import { useOrder } from "@/src/store/order/store";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
-const OrderItem = () => {
+type Props = {
+    product: OrderItemIndividualType;
+};
+
+const CardOrder = ({ product: order }: Props) => {
     const navigate = useRouter();
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
-    const order = useOrder((state) => state.order);
     const setOrder = useOrder((state) => state.setOrder);
     const modal = useGlobal((state) => state.modal);
     const setModal = useGlobal((state) => state.setModal);
     const setId = useOrder((state) => state.setId);
     const setOrderMenu = useMenu((state) => state.setOrder);
 
-    useEffect(() => {
-        const getProduct = async () => {
-            const response = await getOrderById(+id!);
-            if (response.errors && response.errors.length > 0) {
-                navigate.push("/dashboard/productos");
-            } else {
-                setOrder(response.order);
-            }
-            setLoading(false);
-        };
-        getProduct();
-    }, [id]);
-
-    if (loading) return <>Cargando...</>;
-
-    // { id: number; createdAt: string; status: string; price: number; quantity: number; updatedAt: string; categoryId: number; name: string; }
     const parsedOrderMenu = order.products.map((product) => {
         return {
             id: product.id,
@@ -54,17 +40,8 @@ const OrderItem = () => {
             numTable: order.numTable,
         };
     });
-
     return (
-        <>
-            <div>
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded uppercase w-full flex justify-center items-center lg:w-auto gap-3"
-                    onClick={() => navigate.back()}>
-                    <i className="ri-eye-line"></i> Regresar
-                </button>
-            </div>
-
+        <div>
             <div
                 className={`card border 
             ${
@@ -72,9 +49,9 @@ const OrderItem = () => {
                     ? "border-yellow-950"
                     : order.methodPayment === "efectivo"
                     ? "border-green-500"
-                    : "border-blue-500"
+                    : "border-red-500"
             }
-        mt-10 w-full md:w-2/3 lg:w-1/2 mx-auto relative rounded-lg`}>
+        mt-10 w-full mx-auto relative rounded-lg`}>
                 <div className="p-6">
                     <h3 className="text-base font-bold text-secondary dark:text-white mb-2 uppercase text-left md:text-center">
                         Orden #{order.id}
@@ -158,18 +135,6 @@ const OrderItem = () => {
                             Editar Orden
                         </button>
                         <Link
-                            className={`btn bg-danger text-white mt-2 w-full`}
-                            href="#"
-                            onClick={() => {
-                                setModal({
-                                    status: true,
-                                    element: <ModalDeleteOrder />,
-                                });
-                                setId(order.id);
-                            }}>
-                            Cancelar Orden
-                        </Link>
-                        <Link
                             className={`btn bg-primary text-white mt-2 w-full`}
                             href={`/ticket/${order.id}`}>
                             Imprimir Ticket
@@ -199,14 +164,12 @@ const OrderItem = () => {
                             ? "Pago: Efectivo"
                             : order.methodPayment === "tarjeta"
                             ? "Pago: Tarjeta"
-                            : "En espera"}
+                            : "En Espera"}
                     </span>
                 </div>
             </div>
-
-            {modal.status && modal.element}
-        </>
+        </div>
     );
 };
 
-export default OrderItem;
+export default CardOrder;

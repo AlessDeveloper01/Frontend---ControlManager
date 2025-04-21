@@ -1,3 +1,4 @@
+import SummaryProducts from '@/src/components/box/SummaryProducts'
 import PageBreadcrumb from '@/src/components/Global/PageBreadcrumb'
 import TableVentas from '@/src/components/ventas/TableVentas'
 import Link from 'next/link'

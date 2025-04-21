@@ -21,6 +21,7 @@ const LayoutGlobal = ({ children, letter }: Readonly<{ children: React.ReactNode
         document.documentElement.setAttribute("data-menu-color", theme);
         setTheme(localStorage.getItem("theme") || theme);
       }
+      document.body.style.removeProperty("overflow");
     }
   }, [theme, setTheme]);
 
@@ -30,19 +31,23 @@ const LayoutGlobal = ({ children, letter }: Readonly<{ children: React.ReactNode
   }
 
   return (
-    <html lang="en" 
-      data-mode={localStorage.getItem("theme") || theme}
-      dir="ltr" 
-      data-layout-width="default" 
-      data-topbar-color={localStorage.getItem("theme") || theme} 
-      data-menu-color={localStorage.getItem("theme") || theme} 
-      data-layout-position="fixed">
-      <body
-        className={`${letter.className} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+      <html
+          lang="en"
+          data-mode={localStorage.getItem("theme") || theme}
+          dir="ltr"
+          data-layout-width="default"
+          data-topbar-color={localStorage.getItem("theme") || theme}
+          data-menu-color={localStorage.getItem("theme") || theme}
+          data-layout-position="fixed">
+          <body
+              className={`${letter.className} antialiased`}
+              style={{
+                  overflowY: "auto",
+                  overflowX: "hidden",
+              }}>
+              {children}
+          </body>
+      </html>
   );
 }
 

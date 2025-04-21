@@ -10,7 +10,7 @@ import { useGlobal } from "@/src/store/global/store";
 import { useOrder } from "@/src/store/order/store";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 const OrderItemVenta = () => {
     const navigate = useRouter();

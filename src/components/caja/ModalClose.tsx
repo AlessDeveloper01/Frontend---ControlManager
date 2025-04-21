@@ -30,11 +30,12 @@ const ModalCloseCaja = () => {
             return;
         }
         
-        setSuccess([{ msg: 'Caja cerrar exitosamente' }]);
+        setSuccess([{ msg: 'Caja cerrada exitosamente' }]);
         setTimeout(() => {
             setSuccess([]);
             handleCloseModal();
             navigate.push('/dashboard/caja');
+            window.location.reload();
         }, 1500);
     }
 

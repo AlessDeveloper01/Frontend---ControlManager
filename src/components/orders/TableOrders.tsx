@@ -22,8 +22,6 @@ const TableOrders = () => {
         getOrdenes()
     }, [])
 
-    console.log(orders)
-
     return (
         <>
             <div className="flex flex-col mt-10">
@@ -76,51 +74,61 @@ const TableOrders = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {orders && orders.length > 0 && orders.map((order, index) => (
-                                        <tr key={order.id}
-                                            className={`${
-                                                index % 2 === 0
-                                                    ? "bg-white dark:bg-gray-800"
-                                                    : "bg-gray-100 dark:bg-gray-900"
-                                            } border-b dark:border-gray-700`}>
-                                            <td
-                                                className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700 font-bold">
-                                                {order.id}
-                                            </td>
-                                            <td
-                                                className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
-                                                {order.mesero}
-                                            </td>
-                                            <td
-                                                className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
-                                                {FormatAmount(order.total)}
-                                            </td>
-                                            <td
-                                                className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
-                                                {FormatStatePlatillo(order.status)}
-                                            </td>
-                                            <td
-                                                className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
-                                                {order.products.length}
-                                            </td>
-                                            <td
-                                                className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
-                                                {FormatDateTime(order.date)}
-                                            </td>
-                                            <td
-                                                className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
-                                                {order.numTable}
-                                            </td>
-                                            <td
-                                                className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
-                                                <button
-                                                    className="bg-primary text-white px-2 py-1 rounded-md w-full"
-                                                    onClick={() => navigation.push(`/dashboard/ordenes/${order.id}`)}>
-                                                    Ver
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {orders &&
+                                        orders.length > 0 &&
+                                        orders.map((order, index) => (
+                                            <tr
+                                                key={order.id}
+                                                className={`${
+                                                    index % 2 === 0
+                                                        ? "bg-white dark:bg-gray-800"
+                                                        : "bg-gray-100 dark:bg-gray-900"
+                                                } border-b dark:border-gray-700`}>
+                                                <td className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700 font-bold">
+                                                    {order.id}
+                                                </td>
+                                                <td className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
+                                                    {order.mesero}
+                                                </td>
+                                                <td className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
+                                                    {FormatAmount(order.total)}
+                                                </td>
+                                                <td className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
+                                                    {FormatStatePlatillo(
+                                                        order.status
+                                                    )}
+                                                </td>
+                                                <td className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
+                                                    {order.products.length}
+                                                </td>
+                                                <td className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
+                                                    {FormatDateTime(order.date)}
+                                                </td>
+                                                <td className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700">
+                                                    {order.numTable}
+                                                </td>
+                                                <td className="text-sm text-gray-900 dark:text-gray-100 px-6 py-4 whitespace-nowrap border border-gray-300 dark:border-gray-700 grid grid-cols-1 gap-2">
+                                                    <button
+                                                        className="bg-primary text-white px-2 py-2 rounded-md w-full font-bold"
+                                                        onClick={() =>
+                                                            navigation.push(
+                                                                `/dashboard/ordenes/${order.id}`
+                                                            )
+                                                        }>
+                                                        Ver
+                                                    </button>
+                                                    <button
+                                                        className="bg-green-500 text-white px-2 py-2 rounded-md w-full mt-2 font-bold"
+                                                        onClick={() =>
+                                                            navigation.push(
+                                                                `/ticket/${order.id}`
+                                                            )
+                                                        }>
+                                                        Imprimir
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
                                 </tbody>
                             </table>
                         </div>
@@ -128,7 +136,7 @@ const TableOrders = () => {
                 </div>
             </div>
         </>
-    )
+    );
 }
 
 export default TableOrders

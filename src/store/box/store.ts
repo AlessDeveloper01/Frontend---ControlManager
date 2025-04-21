@@ -1,6 +1,7 @@
 import { BoxProductAPIType, BoxType } from "@/src/Objects";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import {BoxPreviewType} from '@/src/Objects/index';
 
 export type BoxStore = {
     box: BoxProductAPIType;
@@ -9,6 +10,8 @@ export type BoxStore = {
     setPage: (page: number) => void;
     boxItem: BoxType;
     setBoxItem: (boxItem: BoxType) => void;
+    boxPreview: BoxPreviewType;
+    setBoxPreview: (boxPreview: BoxPreviewType) => void;
 };
 
 export const useBoxStore = create<BoxStore>()(
@@ -22,5 +25,7 @@ export const useBoxStore = create<BoxStore>()(
         setPage: (page) => set({ page }),
         boxItem: {} as BoxType,
         setBoxItem: (boxItem) => set({ boxItem }),
+        boxPreview: [] as BoxPreviewType,
+        setBoxPreview: (boxPreview) => set({ boxPreview }),
     }))
 );
