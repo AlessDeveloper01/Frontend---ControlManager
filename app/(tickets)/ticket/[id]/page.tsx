@@ -47,7 +47,7 @@ const TicketOrder = () => {
 
         <p className="centrado">
             <br />
-            Restaurant La Perla
+            TU RESTAURANTE
             <br />
             Fecha Pedido: {FormatDateTime(order.date)}
             <br />

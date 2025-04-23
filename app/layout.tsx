@@ -7,8 +7,8 @@ import LayoutGlobal from "@/src/components/Global/LayoutGlobal";
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Restaurante La Perla",
-  description: "Restaurante de comida oaxaqueña, especializado en mariscos y comida típica de la región.",
+  title: "Restaurante F Demo",
+  description: "A demo for Restaurante F",
 };
 
 export default function RootLayout({
