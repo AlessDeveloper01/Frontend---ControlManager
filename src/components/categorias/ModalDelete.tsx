@@ -1,49 +1,55 @@
 'use client';
 
-import ModalLayout from '../HeadlessUI/ModalLayout'
+import ModalLayout from '../HeadlessUI/ModalLayout';
 import { useGlobal } from '@/src/store/global/store';
 import { ErrorSchema } from '@/src/Objects';
 import { useCategoria } from '@/src/store/categorias/store';
 import { deleteCategory } from '@/src/api/categorias';
+import { useState } from 'react';
 
 const ModalDelete = () => {
-    const id = useCategoria(state => state.id)
-    const setId = useCategoria(state => state.setId)
+    const id = useCategoria(state => state.id);
+    const setId = useCategoria(state => state.setId);
     const setModal = useGlobal(state => state.setModal);
     const setErrors = useGlobal(state => state.setErrors);
     const errors = useGlobal(state => state.errors);
     const setSuccess = useGlobal(state => state.setSucess as (success: { msg: string }[]) => void);
     const sucess = useGlobal(state => state.sucess);
 
+    const [isDeleting, setIsDeleting] = useState(false);
+
     const handleCloseModal = () => {
-        setModal({ status: false, element: null })
-        setId(0)
-        setErrors([])
-        setSuccess([])
-    }
+        setModal({ status: false, element: null });
+        setId(0);
+        setErrors([]);
+        setSuccess([]);
+    };
 
     const handleDelete = async () => {
+        setIsDeleting(true);
         const response = await deleteCategory(id);
-        if(response.errors && response.errors.length > 0) {
+        if (response.errors && response.errors.length > 0) {
             setErrors(response.errors);
 
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
+            setIsDeleting(false);
             return;
         }
-        
+
         setSuccess([{ msg: 'Categoría desactivada totalmente' }]);
         setTimeout(() => {
             setSuccess([]);
             handleCloseModal();
         }, 1500);
-    }
+        setIsDeleting(false);
+    };
 
     const errorsParsed = ErrorSchema.parse(errors);
-    console.log(sucess)
-  return (
-    <ModalLayout
+    console.log(sucess);
+    return (
+        <ModalLayout
             showModal={true}
             toggleModal={handleCloseModal}
             panelClassName="sm:max-w-lg"
@@ -62,26 +68,21 @@ const ModalDelete = () => {
                     </button>
                 </div>
                 <div className={`p-4 bg-danger text-white overflow-y-auto`}>
-                {
-                    errorsParsed.length > 0 && (
+                    {errorsParsed.length > 0 && (
                         <div className="mb-6">
-                            {
-                                errorsParsed.map((error, index) => (
-                                    <div key={index} className={`bg-warning text-white border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-                                        <div className="flex items-center gap-1.5">
-                                            <i className={`ri-close-circle-line text-base`}></i>
-                                            <p className="text-sm">
-                                                Error: <span className="font-bold">{error.message}</span>
-                                            </p>
-                                        </div>
+                            {errorsParsed.map((error, index) => (
+                                <div key={index} className={`bg-warning text-white border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                    <div className="flex items-center gap-1.5">
+                                        <i className={`ri-close-circle-line text-base`}></i>
+                                        <p className="text-sm">
+                                            Error: <span className="font-bold">{error.message}</span>
+                                        </p>
                                     </div>
-                                ))
-                            }
+                                </div>
+                            ))}
                         </div>
-                    )
-                }
-                {
-                    sucess.length > 0 && (
+                    )}
+                    {sucess.length > 0 && (
                         <div className="bg-info text-white border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
                             <div className="flex items-center gap-1.5">
                                 <i className={`ri-check-line text-base`}></i>
@@ -90,8 +91,7 @@ const ModalDelete = () => {
                                 </p>
                             </div>
                         </div>
-                    )
-                }
+                    )}
                     <h5 className="mb-2.5 text-base">
                         ¿Estas seguro de desactivar la categoria?
                     </h5>
@@ -108,13 +108,14 @@ const ModalDelete = () => {
                     </button>
                     <button
                         className="btn border-light hover:bg-light hover:text-gray-800 text-white"
-                        onClick={handleDelete}>
-                        Desactivar
+                        onClick={handleDelete}
+                        disabled={isDeleting}>
+                        {isDeleting ? 'Eliminando...' : 'Desactivar'}
                     </button>
                 </div>
             </div>
         </ModalLayout>
-  )
-}
+    );
+};
 
-export default ModalDelete
+export default ModalDelete;

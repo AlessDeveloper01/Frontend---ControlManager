@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import ModalLayout from '../HeadlessUI/ModalLayout'
 import FormInput from '../FormInput'
 import { useGlobal } from '@/src/store/global/store'
@@ -9,6 +9,8 @@ import { useInventario } from '@/src/store/inventario/store'
 import { updateIngredient } from '@/src/api/inventarios'
 
 const FormEditIngredient = () => {
+    const [isLoading, setIsLoading] = useState(false);
+
     const id = useInventario(state => state.id);
     const status = useInventario(state => state.status);
     const setId = useInventario(state => state.setId);
@@ -24,25 +26,29 @@ const FormEditIngredient = () => {
     const setSuccess = useGlobal(state => state.setSucess as (success: { msg: string }[]) => void);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        if(quantity < 1) {
-            setErrors([{msg: 'La cantidad no puede ser menor a 1'}]);
+        e.preventDefault();
+        setIsLoading(true);
+
+        if (quantity < 1) {
+            setErrors([{ msg: 'La cantidad no puede ser menor a 1' }]);
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
+            setIsLoading(false);
             return;
         }
 
         const inventoryRegister = await updateIngredient(id, name, quantity, status);
-        if(inventoryRegister.errors && inventoryRegister.errors.length > 0) {
+        if (inventoryRegister.errors && inventoryRegister.errors.length > 0) {
             setErrors(inventoryRegister.errors);
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
+            setIsLoading(false);
             return;
         }
 
-        setSuccess([{msg: inventoryRegister.msg}]);
+        setSuccess([{ msg: inventoryRegister.msg }]);
 
         setTimeout(() => {
             setSuccess([]);
@@ -51,11 +57,12 @@ const FormEditIngredient = () => {
             setId(0);
             setStatus(true);
             setQuantity(0);
+            setIsLoading(false);
         }, 1500);
     }
 
     const handleCloseModal = () => {
-        setModal({ status: false, element: null })
+        setModal({ status: false, element: null });
         setName('');
         setId(0);
         setStatus(true);
@@ -64,8 +71,8 @@ const FormEditIngredient = () => {
 
     const parsedErrors = ErrorSchema.parse(errors);
 
-  return (
-<>
+    return (
+        <>
             <ModalLayout
                 showModal={true}
                 toggleModal={handleCloseModal}
@@ -89,34 +96,32 @@ const FormEditIngredient = () => {
                             Actualiza la información del ingrediente
                         </h5>
 
-                        { parsedErrors && parsedErrors.length > 0 && (
+                        {parsedErrors && parsedErrors.length > 0 && (
                             <div className="mb-6">
-							{parsedErrors.map((error, index) => (
-								<div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-								<div className="flex items-center gap-1.5">
-									<i className={`ri-close-circle-line text-base`}></i>
-									<p className="text-sm">
-										Error: <span className="font-bold text-xs">{error.msg}</span>
-									</p>
-								</div>
-							</div>
-							))}
+                                {parsedErrors.map((error, index) => (
+                                    <div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                        <div className="flex items-center gap-1.5">
+                                            <i className={`ri-close-circle-line text-base`}></i>
+                                            <p className="text-sm">
+                                                Error: <span className="font-bold text-xs">{error.msg}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
 
-                        {
-                            success.length > 0 && (
-                                <div className="bg-success/10 text-success border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
-                                    <div className="flex items-center gap-1.5">
-                                        <i className={`ri-check-line text-base`}></i>
-                                        <p className="text-sm">
-                                            Exito: <span className="font-bold text-xs">{success[0].msg}</span>
-                                        </p>
-                                    </div>
+                        {success.length > 0 && (
+                            <div className="bg-success/10 text-success border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
+                                <div className="flex items-center gap-1.5">
+                                    <i className={`ri-check-line text-base`}></i>
+                                    <p className="text-sm">
+                                        Exito: <span className="font-bold text-xs">{success[0].msg}</span>
+                                    </p>
                                 </div>
-                            )
-                        }
-                        
+                            </div>
+                        )}
+
                         <hr className="my-5 dark:border-gray-700" />
                         <form onSubmit={onSubmit}>
                             <FormInput
@@ -143,7 +148,7 @@ const FormEditIngredient = () => {
                             />
                             <div className="flex items-center gap-2 mb-6">
                                 <label className="font-semibold text-gray-500">
-                                    { status ? 'Desactivar ingrediente' : 'Activar ingrediente'}
+                                    {status ? 'Desactivar ingrediente' : 'Activar ingrediente'}
                                 </label>
                                 <input
                                     type="checkbox"
@@ -158,8 +163,11 @@ const FormEditIngredient = () => {
                                     onClick={handleCloseModal}>
                                     Cerrar
                                 </button>
-                                <button className="btn bg-primary text-white" type="submit">
-                                    Actualizar
+                                <button
+                                    className={`btn ${isLoading ? 'bg-gray-400' : 'bg-primary'} text-white`}
+                                    type="submit"
+                                    disabled={isLoading}>
+                                    {isLoading ? 'Actualizando...' : 'Actualizar'}
                                 </button>
                             </div>
                         </form>
@@ -167,7 +175,7 @@ const FormEditIngredient = () => {
                 </div>
             </ModalLayout>
         </>
-  )
+    )
 }
 
 export default FormEditIngredient

@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react'
-import ModalLayout from '../HeadlessUI/ModalLayout'
+import React, { useState } from 'react';
+import ModalLayout from '../HeadlessUI/ModalLayout';
 import { useGlobal } from '@/src/store/global/store';
 import { ErrorSchema } from '@/src/Objects';
 import { useRouter } from 'next/navigation';
@@ -15,21 +15,27 @@ const ModalCloseCaja = () => {
     const sucess = useGlobal(state => state.sucess);
     const navigate = useRouter();
 
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const handleCloseModal = () => {
-        setModal({ status: false, element: null })
-    }
+        if (!isProcessing) {
+            setModal({ status: false, element: null });
+        }
+    };
 
     const handleDelete = async () => {
+        setIsProcessing(true); // Deshabilitar el botón y mostrar el mensaje
         const response = await closeBox();
-        if(response.errors && response.errors.length > 0) {
+        if (response.errors && response.errors.length > 0) {
             setErrors(response.errors);
 
             setTimeout(() => {
                 setErrors([]);
+                setIsProcessing(false); // Habilitar el botón nuevamente
             }, 1500);
             return;
         }
-        
+
         setSuccess([{ msg: 'Caja cerrada exitosamente' }]);
         setTimeout(() => {
             setSuccess([]);
@@ -37,12 +43,12 @@ const ModalCloseCaja = () => {
             navigate.push('/dashboard/caja');
             window.location.reload();
         }, 1500);
-    }
+    };
 
     const errorsParsed = ErrorSchema.parse(errors);
-    
-  return (
-    <ModalLayout
+
+    return (
+        <ModalLayout
             showModal={true}
             toggleModal={handleCloseModal}
             panelClassName="sm:max-w-lg"
@@ -61,26 +67,21 @@ const ModalCloseCaja = () => {
                     </button>
                 </div>
                 <div className={`p-4 bg-success text-white overflow-y-auto`}>
-                {
-                    errorsParsed.length > 0 && (
+                    {errorsParsed.length > 0 && (
                         <div className="mb-6">
-                            {
-                                errorsParsed.map((error, index) => (
-                                    <div key={index} className={`bg-warning text-white border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-                                        <div className="flex items-center gap-1.5">
-                                            <i className={`ri-close-circle-line text-base`}></i>
-                                            <p className="text-sm">
-                                                Error: <span className="font-bold">{error.msg}</span>
-                                            </p>
-                                        </div>
+                            {errorsParsed.map((error, index) => (
+                                <div key={index} className={`bg-warning text-white border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                    <div className="flex items-center gap-1.5">
+                                        <i className={`ri-close-circle-line text-base`}></i>
+                                        <p className="text-sm">
+                                            Error: <span className="font-bold">{error.msg}</span>
+                                        </p>
                                     </div>
-                                ))
-                            }
+                                </div>
+                            ))}
                         </div>
-                    )
-                }
-                {
-                    sucess.length > 0 && (
+                    )}
+                    {sucess.length > 0 && (
                         <div className="bg-info text-white border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
                             <div className="flex items-center gap-1.5">
                                 <i className={`ri-check-line text-base`}></i>
@@ -89,8 +90,7 @@ const ModalCloseCaja = () => {
                                 </p>
                             </div>
                         </div>
-                    )
-                }
+                    )}
                     <h5 className="mb-2.5 text-base">
                         ¿Estás seguro de cerrar la caja?
                     </h5>
@@ -103,18 +103,20 @@ const ModalCloseCaja = () => {
                     className={`flex justify-end items-center gap-2 p-4 border-t bg-success border-white/5`}>
                     <button
                         className="btn bg-light text-gray-800 transition-all"
-                        onClick={handleCloseModal}>
+                        onClick={handleCloseModal}
+                        disabled={isProcessing}>
                         Cancelar
                     </button>
                     <button
-                        className="btn border-light hover:bg-light hover:text-gray-800 text-white"
-                        onClick={handleDelete}>
-                        Cerrar Caja
+                        className={`btn border-light hover:bg-light hover:text-gray-800 text-white ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={handleDelete}
+                        disabled={isProcessing}>
+                        {isProcessing ? 'Cerrando, espere...' : 'Cerrar Caja'}
                     </button>
                 </div>
             </div>
         </ModalLayout>
-  )
-}
+    );
+};
 
-export default ModalCloseCaja
+export default ModalCloseCaja;

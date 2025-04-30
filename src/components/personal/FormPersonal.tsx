@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Select from 'react-select'
 import ModalLayout from '../HeadlessUI/ModalLayout'
 import FormInput from '../FormInput'
@@ -11,6 +11,8 @@ import { registerUser } from '@/src/api/auth';
 import { ErrorSchema } from '@/src/Objects'
 
 const FormPersonal = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const name = useAuth(state => state.name)
     const email = useAuth(state => state.email)
     const password = useAuth(state => state.password)
@@ -26,16 +28,17 @@ const FormPersonal = () => {
     const setSuccess = useGlobal(state => state.setSucess as (success: { msg: string }[]) => void);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+        e.preventDefault();
+        setIsSubmitting(true);
+
         const userRegister = await registerUser(name, email, password, permission);
-        if(userRegister.errors && userRegister.errors.length > 0) {
+        if (userRegister.errors && userRegister.errors.length > 0) {
             setErrors(userRegister.errors);
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
-            return;
         } else {
-            setSuccess([{msg: userRegister.msg}]);
+            setSuccess([{ msg: userRegister.msg }]);
 
             setTimeout(() => {
                 setSuccess([]);
@@ -46,20 +49,22 @@ const FormPersonal = () => {
                 setPermission('');
             }, 1500);
         }
+
+        setIsSubmitting(false);
     }
 
     const handleCloseModal = () => {
-        setModal({ status: false, element: null })
-        setName('')
-        setEmail('')
-        setPassword('')
-        setPermission('')
+        setModal({ status: false, element: null });
+        setName('');
+        setEmail('');
+        setPassword('');
+        setPermission('');
     }
 
     const parsedErrors = ErrorSchema.parse(errors);
 
-  return (
-<>
+    return (
+        <>
             <ModalLayout
                 showModal={true}
                 toggleModal={handleCloseModal}
@@ -83,18 +88,18 @@ const FormPersonal = () => {
                             Rellena todos los campos
                         </h5>
 
-                        { parsedErrors && parsedErrors.length > 0 && (
+                        {parsedErrors && parsedErrors.length > 0 && (
                             <div className="mb-6">
-							{parsedErrors.map((error, index) => (
-								<div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-								<div className="flex items-center gap-1.5">
-									<i className={`ri-close-circle-line text-base`}></i>
-									<p className="text-sm">
-										Error: <span className="font-bold text-xs">{error.msg}</span>
-									</p>
-								</div>
-							</div>
-							))}
+                                {parsedErrors.map((error, index) => (
+                                    <div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                        <div className="flex items-center gap-1.5">
+                                            <i className={`ri-close-circle-line text-base`}></i>
+                                            <p className="text-sm">
+                                                Error: <span className="font-bold text-xs">{error.msg}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
 
@@ -110,7 +115,7 @@ const FormPersonal = () => {
                                 </div>
                             )
                         }
-                        
+
                         <hr className="my-5 dark:border-gray-700" />
                         <form onSubmit={onSubmit}>
                             <FormInput
@@ -163,8 +168,11 @@ const FormPersonal = () => {
                                     onClick={handleCloseModal}>
                                     Cerrar
                                 </button>
-                                <button className="btn bg-primary text-white" type="submit">
-                                    Guardar
+                                <button
+                                    className={`btn bg-primary text-white ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    type="submit"
+                                    disabled={isSubmitting}>
+                                    {isSubmitting ? 'Guardando...' : 'Guardar'}
                                 </button>
                             </div>
                         </form>
@@ -172,7 +180,7 @@ const FormPersonal = () => {
                 </div>
             </ModalLayout>
         </>
-  )
+    )
 }
 
 export default FormPersonal

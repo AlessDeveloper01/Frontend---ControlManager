@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-
 'use client'
 
 import Select from 'react-select'
@@ -8,7 +7,7 @@ import ModalLayout from '../HeadlessUI/ModalLayout'
 import FormInput from '../FormInput'
 import { useGlobal } from '@/src/store/global/store'
 import { ErrorSchema, parseCategoryToOptions, parseInventoryToOptions } from '@/src/Objects'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getAllCategories } from '@/src/api/categorias'
 import { useOptions } from '@/src/store/options/store'
 import { useProduct } from '@/src/store/product/store'
@@ -34,17 +33,22 @@ const FormProduct = () => {
     const ingredientsAll = useOptions(state => state.ingredients);
     const setIngredientsAll = useOptions(state => state.setIngredients);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+        e.preventDefault();
+        setIsSubmitting(true);
+
         const userRegister = await createProduct(name, price, categoryId, ingredients);
-        if(userRegister.errors && userRegister.errors.length > 0) {
+        if (userRegister.errors && userRegister.errors.length > 0) {
             setErrors(userRegister.errors);
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
+            setIsSubmitting(false);
             return;
         } else {
-            setSuccess([{msg: userRegister.msg}]);
+            setSuccess([{ msg: userRegister.msg }]);
 
             setTimeout(() => {
                 setSuccess([]);
@@ -53,18 +57,18 @@ const FormProduct = () => {
                 setPrice(0);
                 setCategoryId(0);
                 setIngredients([]);
-                
+                setIsSubmitting(false);
             }, 1500);
         }
-    }
+    };
 
     const handleCloseModal = () => {
-        setModal({ status: false, element: null })
-        setName('')
-        setPrice(0)
-        setCategoryId(0)
-        setIngredients([])
-    }
+        setModal({ status: false, element: null });
+        setName('');
+        setPrice(0);
+        setCategoryId(0);
+        setIngredients([]);
+    };
 
     const parsedErrors = ErrorSchema.parse(errors);
 
@@ -72,16 +76,16 @@ const FormProduct = () => {
         const getOptionsCategory = async () => {
             const [categoriesList, ingredientesList] = await Promise.all([getAllCategories(), getIngredientsAll()]);
             setCategoriesAll(categoriesList.categories);
-            setIngredientsAll(ingredientesList.ingredients)
-        }
+            setIngredientsAll(ingredientesList.ingredients);
+        };
         getOptionsCategory();
     }, []);
 
-    const parsed = parseCategoryToOptions(categoriesAll)
-    const parsedIngredients = parseInventoryToOptions(ingredientsAll)
+    const parsed = parseCategoryToOptions(categoriesAll);
+    const parsedIngredients = parseInventoryToOptions(ingredientsAll);
 
-  return (
-<>
+    return (
+        <>
             <ModalLayout
                 showModal={true}
                 toggleModal={handleCloseModal}
@@ -105,38 +109,34 @@ const FormProduct = () => {
                             Rellena todos los campos
                         </h5>
 
-                        { parsedErrors && parsedErrors.length > 0 && (
+                        {parsedErrors && parsedErrors.length > 0 && (
                             <div className="mb-6">
-							{parsedErrors.map((error, index) => (
-								<div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-								<div className="flex items-center gap-1.5">
-									<i className={`ri-close-circle-line text-base`}></i>
-									<p className="text-sm">
-										Error: <span className="font-bold text-xs">{error.msg || error.message}</span>
-									</p>
-								</div>
-							</div>
-							))}
+                                {parsedErrors.map((error, index) => (
+                                    <div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                        <div className="flex items-center gap-1.5">
+                                            <i className={`ri-close-circle-line text-base`}></i>
+                                            <p className="text-sm">
+                                                Error: <span className="font-bold text-xs">{error.msg || error.message}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
 
-                        {
-                            success.length > 0 && (
-                                <div className="bg-success/10 text-success border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
-                                    <div className="flex items-center gap-1.5">
-                                        <i className={`ri-check-line text-base`}></i>
-                                        <p className="text-sm">
-                                            Exito: <span className="font-bold text-xs">{success[0].msg}</span>
-                                        </p>
-                                    </div>
+                        {success.length > 0 && (
+                            <div className="bg-success/10 text-success border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
+                                <div className="flex items-center gap-1.5">
+                                    <i className={`ri-check-line text-base`}></i>
+                                    <p className="text-sm">
+                                        Exito: <span className="font-bold text-xs">{success[0].msg}</span>
+                                    </p>
                                 </div>
-                            )
-                        }
-                        
+                            </div>
+                        )}
+
                         <hr className="my-5 dark:border-gray-700" />
-                        <form
-                            onSubmit={onSubmit}
-                        >
+                        <form onSubmit={onSubmit}>
                             <FormInput
                                 label="Nombre del producto"
                                 labelClassName="font-semibold text-gray-500"
@@ -188,8 +188,11 @@ const FormProduct = () => {
                                     onClick={handleCloseModal}>
                                     Cerrar
                                 </button>
-                                <button className="btn bg-primary text-white" type="submit">
-                                    Crear producto
+                                <button
+                                    className="btn bg-primary text-white"
+                                    type="submit"
+                                    disabled={isSubmitting}>
+                                    {isSubmitting ? 'Creando, espere...' : 'Crear producto'}
                                 </button>
                             </div>
                         </form>
@@ -197,7 +200,7 @@ const FormProduct = () => {
                 </div>
             </ModalLayout>
         </>
-  )
-}
+    );
+};
 
-export default FormProduct
+export default FormProduct;

@@ -21,35 +21,6 @@ const MENU_ITEMS: MenuItemTypes[] = [
         isTitle: true,
         role: "All",
     },
-    // {
-    //     key: "dashboard",
-    //     label: "Dashboards",
-    //     isTitle: false,
-    //     icon: "ri-home-4-line",
-    //     badge: {
-    //         variant: "bg-success rounded-full",
-    //         text: "2",
-    //     },
-    //     role: "Administrador",
-    //     children: [
-    //         {
-    //             key: "dashboard-ventas",
-    //             label: "Ventas",
-    //             url: "/dashboard/ventas",
-    //             parentKey: "dashboard",
-    //             icon: "ri-shopping-cart-2-line",
-    //             role: "All",
-    //         },
-    //         {
-    //             key: "dashboard-caja",
-    //             label: "Caja",
-    //             url: "/dashboard/caja",
-    //             parentKey: "dashboard",
-    //             icon: "ri-currency-line",
-    //             role: "Administrador",
-    //         },
-    //     ],
-    // },
     {
         key: "dashboard-ventas",
         label: "Ventas",

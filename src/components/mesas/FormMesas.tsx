@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import ModalLayout from '../HeadlessUI/ModalLayout'
 import FormInput from '../FormInput'
 import { useGlobal } from '@/src/store/global/store'
@@ -9,6 +9,7 @@ import { useTables } from '@/src/store/tables'
 import { createTable } from '@/src/api/table'
 
 const FormMesas = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const numTable = useTables(state => state.numTable)
     const setNumTable = useTables(state => state.setNumTable)
     const capacity = useTables(state => state.capacity)
@@ -20,44 +21,48 @@ const FormMesas = () => {
     const setSuccess = useGlobal(state => state.setSucess as (success: { msg: string }[]) => void);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        if(!numTable || !capacity || numTable < 1 || capacity < 1) {
-            setErrors([{msg: 'La cantidad no puede ser menor a 1'}]);
+        e.preventDefault();
+        if (!numTable || !capacity || numTable < 1 || capacity < 1) {
+            setErrors([{ msg: 'La cantidad no puede ser menor a 1' }]);
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
             return;
         }
 
+        setIsSubmitting(true);
+
         const tableRegister = await createTable(numTable, capacity);
-        if(tableRegister.errors && tableRegister.errors.length > 0) {
+        if (tableRegister.errors && tableRegister.errors.length > 0) {
             setErrors(tableRegister.errors);
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
+            setIsSubmitting(false);
             return;
         }
 
-        setSuccess([{msg: "Mesa registrada correctamente"}]);
+        setSuccess([{ msg: "Mesa registrada correctamente" }]);
 
         setTimeout(() => {
             setSuccess([]);
             setModal({ status: false, element: null });
             setNumTable(0);
             setCapacity(0);
+            setIsSubmitting(false);
         }, 1500);
     }
 
     const handleCloseModal = () => {
-        setModal({ status: false, element: null })
+        setModal({ status: false, element: null });
         setNumTable(0);
         setCapacity(0);
     }
 
     const parsedErrors = ErrorSchema.parse(errors);
 
-  return (
-<>
+    return (
+        <>
             <ModalLayout
                 showModal={true}
                 toggleModal={handleCloseModal}
@@ -81,18 +86,18 @@ const FormMesas = () => {
                             Rellena todos los campos
                         </h5>
 
-                        { parsedErrors && parsedErrors.length > 0 && (
+                        {parsedErrors && parsedErrors.length > 0 && (
                             <div className="mb-6">
-							{parsedErrors.map((error, index) => (
-								<div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-								<div className="flex items-center gap-1.5">
-									<i className={`ri-close-circle-line text-base`}></i>
-									<p className="text-sm">
-										Error: <span className="font-bold text-xs">{error.msg}</span>
-									</p>
-								</div>
-							</div>
-							))}
+                                {parsedErrors.map((error, index) => (
+                                    <div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                        <div className="flex items-center gap-1.5">
+                                            <i className={`ri-close-circle-line text-base`}></i>
+                                            <p className="text-sm">
+                                                Error: <span className="font-bold text-xs">{error.msg}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
 
@@ -108,7 +113,7 @@ const FormMesas = () => {
                                 </div>
                             )
                         }
-                        
+
                         <hr className="my-5 dark:border-gray-700" />
                         <form onSubmit={onSubmit}>
                             <FormInput
@@ -116,7 +121,7 @@ const FormMesas = () => {
                                 labelClassName="font-semibold text-gray-500"
                                 type="number"
                                 className="form-input w-full md:w-96"
-                              name="numTable"
+                                name="numTable"
                                 placeholder={"Ej. 1"}
                                 containerClass="mb-6 space-y-2"
                                 value={numTable}
@@ -139,8 +144,11 @@ const FormMesas = () => {
                                     onClick={handleCloseModal}>
                                     Cerrar
                                 </button>
-                                <button className="btn bg-primary text-white" type="submit">
-                                    Guardar
+                                <button
+                                    className={`btn ${isSubmitting ? 'bg-gray-400' : 'bg-primary'} text-white`}
+                                    type="submit"
+                                    disabled={isSubmitting}>
+                                    {isSubmitting ? 'Guardando...' : 'Guardar'}
                                 </button>
                             </div>
                         </form>
@@ -148,7 +156,7 @@ const FormMesas = () => {
                 </div>
             </ModalLayout>
         </>
-  )
+    )
 }
 
 export default FormMesas

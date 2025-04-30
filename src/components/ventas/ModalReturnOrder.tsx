@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react'
-import ModalLayout from '../HeadlessUI/ModalLayout'
+import React, { useState } from 'react';
+import ModalLayout from '../HeadlessUI/ModalLayout';
 import { useGlobal } from '@/src/store/global/store';
 import { ErrorSchema } from '@/src/Objects';
 import { useRouter } from 'next/navigation';
@@ -9,6 +9,7 @@ import { useOrder } from '@/src/store/order/store';
 import { finishOrder } from '@/src/api/order';
 
 const ModalReturnOrder = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const idOrder = useOrder((state) => state.id);
     const setId = useOrder((state) => state.setId);
     const setPayment = useOrder((state) => state.setPayment);
@@ -20,34 +21,37 @@ const ModalReturnOrder = () => {
     const navigate = useRouter();
 
     const handleCloseModal = () => {
-        setModal({ status: false, element: null })
-        setId(0)
-        setPayment('')
-    }
+        setModal({ status: false, element: null });
+        setId(0);
+        setPayment('');
+    };
 
     const handleDelete = async () => {
+        setIsLoading(true); 
         const response = await finishOrder(idOrder, "Espera", false);
-        if(response.errors && response.errors.length > 0) {
+        if (response.errors && response.errors.length > 0) {
             setErrors(response.errors);
 
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
+            setIsLoading(false); 
             return;
         }
-        
+
         setSuccess([{ msg: 'Orden regresada correctamente' }]);
         setTimeout(() => {
             setSuccess([]);
             handleCloseModal();
             navigate.push('/dashboard/ordenes');
         }, 1500);
-    }
+        setIsLoading(false); 
+    };
 
     const errorsParsed = ErrorSchema.parse(errors);
-    
-  return (
-    <ModalLayout
+
+    return (
+        <ModalLayout
             showModal={true}
             toggleModal={handleCloseModal}
             panelClassName="sm:max-w-lg"
@@ -66,41 +70,41 @@ const ModalReturnOrder = () => {
                     </button>
                 </div>
                 <div className={`p-4 bg-success text-white overflow-y-auto`}>
-                {
-                    errorsParsed.length > 0 && (
-                        <div className="mb-6">
-                            {
-                                errorsParsed.map((error, index) => (
-                                    <div key={index} className={`bg-warning text-white border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-                                        <div className="flex items-center gap-1.5">
-                                            <i className={`ri-close-circle-line text-base`}></i>
-                                            <p className="text-sm">
-                                                Error: <span className="font-bold">{error.msg}</span>
-                                            </p>
+                    {
+                        errorsParsed.length > 0 && (
+                            <div className="mb-6">
+                                {
+                                    errorsParsed.map((error, index) => (
+                                        <div key={index} className={`bg-warning text-white border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                            <div className="flex items-center gap-1.5">
+                                                <i className={`ri-close-circle-line text-base`}></i>
+                                                <p className="text-sm">
+                                                    Error: <span className="font-bold">{error.msg}</span>
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))
-                            }
-                        </div>
-                    )
-                }
-                {
-                    sucess.length > 0 && (
-                        <div className="bg-info text-white border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
-                            <div className="flex items-center gap-1.5">
-                                <i className={`ri-check-line text-base`}></i>
-                                <p className="text-sm">
-                                    Exito: <span className="font-bold">{sucess[0].msg}</span>
-                                </p>
+                                    ))
+                                }
                             </div>
-                        </div>
-                    )
-                }
+                        )
+                    }
+                    {
+                        sucess.length > 0 && (
+                            <div className="bg-info text-white border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
+                                <div className="flex items-center gap-1.5">
+                                    <i className={`ri-check-line text-base`}></i>
+                                    <p className="text-sm">
+                                        Exito: <span className="font-bold">{sucess[0].msg}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        )
+                    }
                     <h5 className="mb-2.5 text-base">
                         ¿Estás seguro de regresar la orden?
                     </h5>
                     <p className="text-sm mb-4">
-                        Al regresar la orden, esta estara disponible en las ordenes pendientes.
+                        Al regresar la orden, esta estará disponible en las órdenes pendientes.
                     </p>
                 </div>
 
@@ -108,18 +112,20 @@ const ModalReturnOrder = () => {
                     className={`flex justify-end items-center gap-2 p-4 border-t bg-success border-white/5`}>
                     <button
                         className="btn bg-light text-gray-800 transition-all"
-                        onClick={handleCloseModal}>
+                        onClick={handleCloseModal}
+                        disabled={isLoading}>
                         Cancelar
                     </button>
                     <button
-                        className="btn border-light hover:bg-light hover:text-gray-800 text-white"
-                        onClick={handleDelete}>
-                        Regresar
+                        className={`btn border-light hover:bg-light hover:text-gray-800 text-white ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={handleDelete}
+                        disabled={isLoading}>
+                        {isLoading ? 'Regresando a cocina, espere...' : 'Regresar'}
                     </button>
                 </div>
             </div>
         </ModalLayout>
-  )
-}
+    );
+};
 
-export default ModalReturnOrder
+export default ModalReturnOrder;

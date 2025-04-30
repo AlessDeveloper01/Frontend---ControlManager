@@ -40,7 +40,6 @@ const OrderItem = () => {
 
     if (loading) return <>Cargando...</>;
 
-    // { id: number; createdAt: string; status: string; price: number; quantity: number; updatedAt: string; categoryId: number; name: string; }
     const parsedOrderMenu = order.products.map((product) => {
         return {
             id: product.id,
@@ -60,7 +59,7 @@ const OrderItem = () => {
             <div>
                 <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded uppercase w-full flex justify-center items-center lg:w-auto gap-3"
-                    onClick={() => navigate.back()}>
+                    onClick={() => navigate.push("/dashboard/ordenes")}>
                     <i className="ri-eye-line"></i> Regresar
                 </button>
             </div>

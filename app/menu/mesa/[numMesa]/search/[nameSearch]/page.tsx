@@ -18,7 +18,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import ModalCart from '@/src/components/menu/ModalCart';
+import ModalCart from "@/src/components/menu/ModalCart";
 
 const MenuSearchPage = () => {
     const router = useRouter();
@@ -63,15 +63,18 @@ const MenuSearchPage = () => {
 
     const numeroMesa = parseInt(Array.isArray(numMesa) ? numMesa[0] : numMesa);
 
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const handleCreateOrder = async () => {
+        setIsProcessing(true);
         const parsedOrder = OrderItemAPIList.parse(order);
         const response = await createOrder(parsedOrder, numeroMesa);
         if (response.errors && response.errors.length > 0) {
             setToast({ status: true, type: "error", message: "Ocurrio un error" });
-
             setTimeout(() => {
                 setToast({ status: false, type: "error", message: "" });
             }, 1000);
+            setIsProcessing(false);
             return;
         }
 
@@ -86,17 +89,19 @@ const MenuSearchPage = () => {
             setToast({ status: false, type: "success", message: "" });
         }, 1000);
         clearOrder();
+        setIsProcessing(false);
     };
 
     const handleUpdateOrder = async () => {
+        setIsProcessing(true);
         const parsedOrder = OrderItemAPIList.parse(order);
         const response = await updateOrder(idOrden, parsedOrder);
         if (response.errors && response.errors.length > 0) {
             setToast({ status: true, type: "error", message: "Ocurrio un error" });
-
             setTimeout(() => {
                 setToast({ status: false, type: "error", message: "" });
             }, 1000);
+            setIsProcessing(false);
             return;
         }
 
@@ -111,6 +116,7 @@ const MenuSearchPage = () => {
             setToast({ status: false, type: "success", message: "" });
         }, 1000);
         clearOrder();
+        setIsProcessing(false);
     };
 
     const [isAtBottom, setIsAtBottom] = useState(false);
@@ -144,12 +150,12 @@ const MenuSearchPage = () => {
     };
 
     const searchProducts = async () => {
-         if (name.trim() === "") {
-             return;
-         }
+        if (name.trim() === "") {
+            return;
+        }
         router.push(`/menu/mesa/${numMesa}/search/${name}`);
         setName("");
-    }
+    };
 
     return (
         <main className="grid grid-cols-1 lg:grid-cols-[1fr,2fr,1fr] gap-4 mx-auto bg-gray-100 p-3 dark:bg-gray-800 rounded relative overflow-y-auto min-h-screen h-[calc(100vh-20px)] overflow-hidden">
@@ -355,16 +361,22 @@ const MenuSearchPage = () => {
                             {idOrden === 0 ? (
                                 <button
                                     className="btn bg-primary text-white w-full mt-4"
-                                    onClick={handleCreateOrder}>
-                                    <i className="ri-shopping-cart-2-line me-1"></i>{" "}
-                                    Realizar Orden
+                                    onClick={handleCreateOrder}
+                                    disabled={isProcessing}>
+                                    <i className="ri-check-line me-1"></i>{" "}
+                                    {isProcessing
+                                        ? "Creando, espere..."
+                                        : "Realizar Orden"}
                                 </button>
                             ) : (
                                 <button
                                     className="btn bg-primary text-white w-full mt-4"
-                                    onClick={handleUpdateOrder}>
-                                    <i className="ri-shopping-cart-2-line me-1"></i>{" "}
-                                    Actualizar Orden
+                                    onClick={handleUpdateOrder}
+                                    disabled={isProcessing}>
+                                    <i className="ri-check-line me-1"></i>{" "}
+                                    {isProcessing
+                                        ? "Actualizando, espere..."
+                                        : "Actualizar Orden"}
                                 </button>
                             )}
                         </div>
@@ -418,8 +430,7 @@ const MenuSearchPage = () => {
 
             <button
                 className="btn bg-amber-600 text-white fixed bottom-4 left-4 lg:hidden py-2"
-                onClick={() => setModal({ status: true, element: <ModalCart /> })}
-            >
+                onClick={() => setModal({ status: true, element: <ModalCart /> })}>
                 <i className="ri-shopping-cart-2-line w-full text-xl"></i>
             </button>
 
@@ -427,6 +438,5 @@ const MenuSearchPage = () => {
         </main>
     );
 };
-
 
 export default MenuSearchPage;

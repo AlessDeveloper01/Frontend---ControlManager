@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import ModalLayout from '../HeadlessUI/ModalLayout'
 import FormInput from '../FormInput'
 import { useGlobal } from '@/src/store/global/store'
@@ -9,6 +9,7 @@ import { useInventario } from '@/src/store/inventario/store'
 import { createIngredient } from '@/src/api/inventarios'
 
 const FormIngredient = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const name = useInventario(state => state.nombre);
     const quantity = useInventario(state => state.quantity);
     const setName = useInventario(state => state.setNombre);
@@ -20,44 +21,49 @@ const FormIngredient = () => {
     const setSuccess = useGlobal(state => state.setSucess as (success: { msg: string }[]) => void);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        if(quantity < 1) {
-            setErrors([{msg: 'La cantidad no puede ser menor a 1'}]);
+        e.preventDefault();
+        setIsLoading(true);
+
+        if (quantity < 1) {
+            setErrors([{ msg: 'La cantidad no puede ser menor a 1' }]);
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
+            setIsLoading(false);
             return;
         }
 
         const inventoryRegister = await createIngredient(name, quantity);
-        if(inventoryRegister.errors && inventoryRegister.errors.length > 0) {
+        if (inventoryRegister.errors && inventoryRegister.errors.length > 0) {
             setErrors(inventoryRegister.errors);
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
+            setIsLoading(false);
             return;
         }
 
-        setSuccess([{msg: inventoryRegister.msg}]);
+        setSuccess([{ msg: inventoryRegister.msg }]);
 
         setTimeout(() => {
             setSuccess([]);
             setModal({ status: false, element: null });
             setName('');
             setQuantity(0);
+            setIsLoading(false);
         }, 1500);
-    }
+    };
 
     const handleCloseModal = () => {
-        setModal({ status: false, element: null })
-        setName('')
-        setQuantity(0)
-    }
+        setModal({ status: false, element: null });
+        setName('');
+        setQuantity(0);
+    };
 
     const parsedErrors = ErrorSchema.parse(errors);
 
-  return (
-<>
+    return (
+        <>
             <ModalLayout
                 showModal={true}
                 toggleModal={handleCloseModal}
@@ -81,34 +87,32 @@ const FormIngredient = () => {
                             Rellena todos los campos
                         </h5>
 
-                        { parsedErrors && parsedErrors.length > 0 && (
+                        {parsedErrors && parsedErrors.length > 0 && (
                             <div className="mb-6">
-							{parsedErrors.map((error, index) => (
-								<div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-								<div className="flex items-center gap-1.5">
-									<i className={`ri-close-circle-line text-base`}></i>
-									<p className="text-sm">
-										Error: <span className="font-bold text-xs">{error.msg}</span>
-									</p>
-								</div>
-							</div>
-							))}
+                                {parsedErrors.map((error, index) => (
+                                    <div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                        <div className="flex items-center gap-1.5">
+                                            <i className={`ri-close-circle-line text-base`}></i>
+                                            <p className="text-sm">
+                                                Error: <span className="font-bold text-xs">{error.msg}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
 
-                        {
-                            success.length > 0 && (
-                                <div className="bg-success/10 text-success border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
-                                    <div className="flex items-center gap-1.5">
-                                        <i className={`ri-check-line text-base`}></i>
-                                        <p className="text-sm">
-                                            Exito: <span className="font-bold text-xs">{success[0].msg}</span>
-                                        </p>
-                                    </div>
+                        {success.length > 0 && (
+                            <div className="bg-success/10 text-success border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
+                                <div className="flex items-center gap-1.5">
+                                    <i className={`ri-check-line text-base`}></i>
+                                    <p className="text-sm">
+                                        Exito: <span className="font-bold text-xs">{success[0].msg}</span>
+                                    </p>
                                 </div>
-                            )
-                        }
-                        
+                            </div>
+                        )}
+
                         <hr className="my-5 dark:border-gray-700" />
                         <form onSubmit={onSubmit}>
                             <FormInput
@@ -136,11 +140,15 @@ const FormIngredient = () => {
                             <div className="flex justify-end items-center gap-2 p-4 border-t dark:border-slate-700">
                                 <button
                                     className="btn bg-light text-gray-800 transition-all"
-                                    onClick={handleCloseModal}>
+                                    onClick={handleCloseModal}
+                                    disabled={isLoading}>
                                     Cerrar
                                 </button>
-                                <button className="btn bg-primary text-white" type="submit">
-                                    Guardar
+                                <button
+                                    className={`btn ${isLoading ? 'bg-gray-400' : 'bg-primary'} text-white`}
+                                    type="submit"
+                                    disabled={isLoading}>
+                                    {isLoading ? 'Agregando, espere...' : 'Guardar'}
                                 </button>
                             </div>
                         </form>
@@ -148,7 +156,7 @@ const FormIngredient = () => {
                 </div>
             </ModalLayout>
         </>
-  )
-}
+    );
+};
 
-export default FormIngredient
+export default FormIngredient;

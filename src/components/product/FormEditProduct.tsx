@@ -7,7 +7,7 @@ import ModalLayout from '../HeadlessUI/ModalLayout'
 import FormInput from '../FormInput'
 import { useGlobal } from '@/src/store/global/store'
 import { ErrorSchema, parseCategoryToOptions, parseInventoryToOptions } from '@/src/Objects'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getAllCategories } from '@/src/api/categorias'
 import { useOptions } from '@/src/store/options/store'
 import { useProduct } from '@/src/store/product/store'
@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation'
 
 const FormEditProduct = () => {
     const navigate = useRouter();
+    const [isLoading, setIsLoading] = useState(false); 
     const name = useProduct(state => state.name)
     const setName = useProduct(state => state.setName)
     const price = useProduct(state => state.price)
@@ -40,16 +41,18 @@ const FormEditProduct = () => {
     const setId = useProduct(state => state.setId);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+        e.preventDefault();
+        setIsLoading(true); 
         const userRegister = await updateProduct(id, name, price, categoryId, ingredients, status);
-        if(userRegister.errors && userRegister.errors.length > 0) {
+        if (userRegister.errors && userRegister.errors.length > 0) {
             setErrors(userRegister.errors);
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
+            setIsLoading(false);
             return;
         } else {
-            setSuccess([{msg: userRegister.msg}]);
+            setSuccess([{ msg: userRegister.msg }]);
 
             setTimeout(() => {
                 setSuccess([]);
@@ -60,19 +63,19 @@ const FormEditProduct = () => {
                 setIngredients([]);
                 setId(0);
                 navigate.push('/dashboard/productos');
-                
+                setIsLoading(false);
             }, 1500);
         }
-    }
+    };
 
     const handleCloseModal = () => {
-        setModal({ status: false, element: null })
-        setName('')
-        setPrice(0)
-        setCategoryId(0)
-        setIngredients([])
+        setModal({ status: false, element: null });
+        setName('');
+        setPrice(0);
+        setCategoryId(0);
+        setIngredients([]);
         setId(0);
-    }
+    };
 
     const parsedErrors = ErrorSchema.parse(errors);
 
@@ -80,16 +83,16 @@ const FormEditProduct = () => {
         const getOptionsCategory = async () => {
             const [categoriesList, ingredientesList] = await Promise.all([getAllCategories(), getIngredientsAll()]);
             setCategoriesAll(categoriesList.categories);
-            setIngredientsAll(ingredientesList.ingredients)
-        }
+            setIngredientsAll(ingredientesList.ingredients);
+        };
         getOptionsCategory();
     }, []);
 
-    const parsed = parseCategoryToOptions(categoriesAll)
-    const parsedIngredients = parseInventoryToOptions(ingredientsAll)
+    const parsed = parseCategoryToOptions(categoriesAll);
+    const parsedIngredients = parseInventoryToOptions(ingredientsAll);
 
-  return (
-<>
+    return (
+        <>
             <ModalLayout
                 showModal={true}
                 toggleModal={handleCloseModal}
@@ -113,38 +116,34 @@ const FormEditProduct = () => {
                             Rellena todos los campos
                         </h5>
 
-                        { parsedErrors && parsedErrors.length > 0 && (
+                        {parsedErrors && parsedErrors.length > 0 && (
                             <div className="mb-6">
-							{parsedErrors.map((error, index) => (
-								<div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-								<div className="flex items-center gap-1.5">
-									<i className={`ri-close-circle-line text-base`}></i>
-									<p className="text-sm">
-										Error: <span className="font-bold text-xs">{error.msg || error.message}</span>
-									</p>
-								</div>
-							</div>
-							))}
+                                {parsedErrors.map((error, index) => (
+                                    <div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                        <div className="flex items-center gap-1.5">
+                                            <i className={`ri-close-circle-line text-base`}></i>
+                                            <p className="text-sm">
+                                                Error: <span className="font-bold text-xs">{error.msg || error.message}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
 
-                        {
-                            success.length > 0 && (
-                                <div className="bg-success/10 text-success border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
-                                    <div className="flex items-center gap-1.5">
-                                        <i className={`ri-check-line text-base`}></i>
-                                        <p className="text-sm">
-                                            Exito: <span className="font-bold text-xs">{success[0].msg}</span>
-                                        </p>
-                                    </div>
+                        {success.length > 0 && (
+                            <div className="bg-success/10 text-success border border-success/20 text-sm rounded-md py-3 px-5 mb-2">
+                                <div className="flex items-center gap-1.5">
+                                    <i className={`ri-check-line text-base`}></i>
+                                    <p className="text-sm">
+                                        Exito: <span className="font-bold text-xs">{success[0].msg}</span>
+                                    </p>
                                 </div>
-                            )
-                        }
-                        
+                            </div>
+                        )}
+
                         <hr className="my-5 dark:border-gray-700" />
-                        <form
-                            onSubmit={onSubmit}
-                        >
+                        <form onSubmit={onSubmit}>
                             <FormInput
                                 label="Nombre del producto"
                                 labelClassName="font-semibold text-gray-500"
@@ -207,11 +206,15 @@ const FormEditProduct = () => {
                             <div className="flex justify-end items-center gap-2 p-4 border-t dark:border-slate-700">
                                 <button
                                     className="btn bg-light text-gray-800 transition-all"
-                                    onClick={handleCloseModal}>
+                                    onClick={handleCloseModal}
+                                    disabled={isLoading}>
                                     Cerrar
                                 </button>
-                                <button className="btn bg-primary text-white" type="submit">
-                                    Guardar
+                                <button
+                                    className="btn bg-primary text-white"
+                                    type="submit"
+                                    disabled={isLoading}>
+                                    {isLoading ? 'Actualizando...' : 'Guardar'}
                                 </button>
                             </div>
                         </form>
@@ -219,7 +222,7 @@ const FormEditProduct = () => {
                 </div>
             </ModalLayout>
         </>
-  )
-}
+    );
+};
 
-export default FormEditProduct
+export default FormEditProduct;

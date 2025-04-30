@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import ModalLayout from "../HeadlessUI/ModalLayout";
 import { useGlobal } from "@/src/store/global/store";
-import {ErrorSchema, OrderItemAPIList} from '@/src/Objects';
+import { ErrorSchema, OrderItemAPIList } from "@/src/Objects";
 import Select from "react-select";
 import { useRouter } from "next/navigation";
 import { useOrder } from "@/src/store/order/store";
-import {finishOrder, createOrder, updateOrder} from '@/src/api/order';
+import { finishOrder, createOrder, updateOrder } from "@/src/api/order";
 import DeleteMenu from "@/src/components/menu/Delete";
 import { FormatAmount } from "@/src/helpers/format";
 import { useMenu } from "@/src/store/menu/store";
@@ -30,63 +30,74 @@ const ModalCart = () => {
 
     const sucess = useGlobal((state) => state.sucess);
     const navigate = useRouter();
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const handleCloseModal = () => {
         setModal({ status: false, element: null });
     };
 
     const numeroMesa = parseInt(Array.isArray(numMesa) ? numMesa[0] : numMesa);
-    
-        const handleCreateOrder = async () => {
-            const parsedOrder = OrderItemAPIList.parse(order);
-            const response = await createOrder(parsedOrder, numeroMesa);
-            if (response.errors && response.errors.length > 0) {
-                setToast({ status: true, type: "error", message: "Ocurrio un error (Mesa ocupada)" });
-                setTimeout(() => {
-                    setToast({ status: false, type: "error", message: "" });
-                }, 1000);
-                return;
-            }
-    
+
+    const handleCreateOrder = async () => {
+        setIsProcessing(true);
+        const parsedOrder = OrderItemAPIList.parse(order);
+        const response = await createOrder(parsedOrder, numeroMesa);
+        if (response.errors && response.errors.length > 0) {
             setToast({
                 status: true,
-                type: "success",
-                message: "Orden realizada con exito",
+                type: "error",
+                message: "Ocurrio un error (Mesa ocupada)",
             });
+            setTimeout(() => {
+                setToast({ status: false, type: "error", message: "" });
+            }, 1000);
+            setIsProcessing(false);
+            return;
+        }
+
+        setToast({
+            status: true,
+            type: "success",
+            message: "Orden realizada con exito",
+        });
+        setModal({ status: false, element: null });
+        router.push(`/dashboard/ordenes/${response.idOrden}`);
+
+        setTimeout(() => {
+            setToast({ status: false, type: "success", message: "" });
+        }, 1000);
+        clearOrder();
+        setIsProcessing(false);
+    };
+
+    const handleUpdateOrder = async () => {
+        setIsProcessing(true);
+        const parsedOrder = OrderItemAPIList.parse(order);
+        const response = await updateOrder(idOrden, parsedOrder);
+        if (response.errors && response.errors.length > 0) {
+            setToast({ status: true, type: "error", message: "Ocurrio un error" });
+
+            setTimeout(() => {
+                setToast({ status: false, type: "error", message: "" });
+            }, 1000);
+            setIsProcessing(false);
+            return;
+        }
+
+        setToast({
+            status: true,
+            type: "success",
+            message: "Orden actualizada con exito",
+        });
+        setIdOrden(0);
+
+        setTimeout(() => {
             setModal({ status: false, element: null });
-            router.push(`/dashboard/ordenes/${response.idOrden}`);
-    
-            setTimeout(() => {
-                setToast({ status: false, type: "success", message: "" });
-            }, 1000);
-            clearOrder();
-        };
-    
-        const handleUpdateOrder = async () => {
-            const parsedOrder = OrderItemAPIList.parse(order);
-            const response = await updateOrder(idOrden, parsedOrder);
-            if (response.errors && response.errors.length > 0) {
-                setToast({ status: true, type: "error", message: "Ocurrio un error" });
-    
-                setTimeout(() => {
-                    setToast({ status: false, type: "error", message: "" });
-                }, 1000);
-                return;
-            }
-    
-            setToast({
-                status: true,
-                type: "success",
-                message: "Orden actualizada con exito",
-            });
-            setIdOrden(0);
-            
-            setTimeout(() => {
-                setModal({ status: false, element: null });
-                setToast({ status: false, type: "success", message: "" });
-            }, 1000);
-            clearOrder();
-        };
+            setToast({ status: false, type: "success", message: "" });
+        }, 1000);
+        clearOrder();
+        setIsProcessing(false);
+    };
 
     return (
         <ModalLayout
@@ -218,16 +229,22 @@ const ModalCart = () => {
                             {idOrden === 0 ? (
                                 <button
                                     className="btn bg-primary text-white w-full mt-4"
-                                    onClick={handleCreateOrder}>
-                                    <i className="ri-shopping-cart-2-line me-1"></i>{" "}
-                                    Realizar Orden
+                                    onClick={handleCreateOrder}
+                                    disabled={isProcessing}>
+                                     <i className="ri-check-line me-1"></i>{" "}
+                                    {isProcessing
+                                        ? "Creando, espere..."
+                                        : "Realizar Orden"}
                                 </button>
                             ) : (
                                 <button
                                     className="btn bg-primary text-white w-full mt-4"
-                                    onClick={handleUpdateOrder}>
-                                    <i className="ri-shopping-cart-2-line me-1"></i>{" "}
-                                    Actualizar Orden
+                                    onClick={handleUpdateOrder}
+                                        disabled={isProcessing}>
+                                    <i className="ri-check-line me-1"></i>{" "}
+                                    {isProcessing
+                                        ? "Actualizando, espere..."
+                                        : "Actualizar Orden"}
                                 </button>
                             )}
                         </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Select from 'react-select'
 import ModalLayout from '../HeadlessUI/ModalLayout'
 import FormInput from '../FormInput'
@@ -11,6 +11,7 @@ import { updateUser, updateUserPass } from '@/src/api/auth';
 import { ErrorSchema } from '@/src/Objects'
 
 const FormEditPersonal = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el botón
     const id = useAuth(state => state.id)
     const name = useAuth(state => state.name)
     const email = useAuth(state => state.email)
@@ -28,19 +29,33 @@ const FormEditPersonal = () => {
     const setSuccess = useGlobal(state => state.setSucess as (success: { msg: string }[]) => void);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+        e.preventDefault();
+        setIsSubmitting(true);
 
-        if(password !== '') {
-            const userEditPassword = await updateUserPass(id, name, email, permission, password);
-            if(userEditPassword.errors && userEditPassword.errors.length > 0) {
-                setErrors(userEditPassword.errors);
-                setTimeout(() => {
-                    setErrors([]);
-                }, 1500);
-                return;
+        try {
+            if (password !== '') {
+                const userEditPassword = await updateUserPass(id, name, email, permission, password);
+                if (userEditPassword.errors && userEditPassword.errors.length > 0) {
+                    setErrors(userEditPassword.errors);
+                    setTimeout(() => {
+                        setErrors([]);
+                    }, 1500);
+                    return;
+                }
+
+                setSuccess([{ msg: userEditPassword.msg }]);
+            } else {
+                const userEdit = await updateUser(id, name, email, permission);
+                if (userEdit.errors && userEdit.errors.length > 0) {
+                    setErrors(userEdit.errors);
+                    setTimeout(() => {
+                        setErrors([]);
+                    }, 1500);
+                    return;
+                }
+
+                setSuccess([{ msg: userEdit.msg }]);
             }
-
-            setSuccess([{msg: userEditPassword.msg}]);
 
             setTimeout(() => {
                 setSuccess([]);
@@ -51,43 +66,24 @@ const FormEditPersonal = () => {
                 setPassword('');
                 setPermission('');
             }, 1500);
-        } else {
-            const userEdit = await updateUser(id, name, email, permission);
-            if(userEdit.errors && userEdit.errors.length > 0) {
-                setErrors(userEdit.errors);
-                setTimeout(() => {
-                    setErrors([]);
-                }, 1500);
-                return;
-            }
-
-            setSuccess([{msg: userEdit.msg}]);
-
-            setTimeout(() => {
-                setSuccess([]);
-                setModal({ status: false, element: null });
-                setId(0);
-                setName('');
-                setEmail('');
-                setPassword('');
-                setPermission('');
-            }, 1500);
+        } finally {
+            setIsSubmitting(false);
         }
-    }
+    };
 
     const handleCloseModal = () => {
-        setModal({ status: false, element: null })
-        setId(0)
-        setName('')
-        setEmail('')
-        setPassword('')
-        setPermission('')
-    }
+        setModal({ status: false, element: null });
+        setId(0);
+        setName('');
+        setEmail('');
+        setPassword('');
+        setPermission('');
+    };
 
     const parsedErrors = ErrorSchema.parse(errors);
 
-  return (
-<>
+    return (
+        <>
             <ModalLayout
                 showModal={true}
                 toggleModal={handleCloseModal}
@@ -111,18 +107,18 @@ const FormEditPersonal = () => {
                             Todos los campos son obligatorios
                         </h5>
 
-                        { parsedErrors && parsedErrors.length > 0 && (
+                        {parsedErrors && parsedErrors.length > 0 && (
                             <div className="mb-6">
-							{parsedErrors.map((error, index) => (
-								<div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-								<div className="flex items-center gap-1.5">
-									<i className={`ri-close-circle-line text-base`}></i>
-									<p className="text-sm">
-										Error: <span className="font-bold text-xs">{error.msg}</span>
-									</p>
-								</div>
-							</div>
-							))}
+                                {parsedErrors.map((error, index) => (
+                                    <div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                        <div className="flex items-center gap-1.5">
+                                            <i className={`ri-close-circle-line text-base`}></i>
+                                            <p className="text-sm">
+                                                Error: <span className="font-bold text-xs">{error.msg}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
 
@@ -138,7 +134,7 @@ const FormEditPersonal = () => {
                                 </div>
                             )
                         }
-                        
+
                         <hr className="my-5 dark:border-gray-700" />
                         <form onSubmit={onSubmit}>
                             <FormInput
@@ -191,8 +187,11 @@ const FormEditPersonal = () => {
                                     onClick={handleCloseModal}>
                                     Cancelar
                                 </button>
-                                <button className="btn bg-primary text-white" type="submit">
-                                    Confirmar cambios
+                                <button
+                                    className={`btn bg-primary text-white ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    type="submit"
+                                    disabled={isSubmitting}>
+                                    {isSubmitting ? 'Actualizando...' : 'Confirmar cambios'}
                                 </button>
                             </div>
                         </form>
@@ -200,7 +199,7 @@ const FormEditPersonal = () => {
                 </div>
             </ModalLayout>
         </>
-  )
+    )
 }
 
 export default FormEditPersonal

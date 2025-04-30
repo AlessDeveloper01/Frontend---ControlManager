@@ -1,14 +1,15 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import ModalLayout from '../HeadlessUI/ModalLayout'
 import FormInput from '../FormInput'
 import { useGlobal } from '@/src/store/global/store'
 import { ErrorSchema } from '@/src/Objects'
 import { useTables } from '@/src/store/tables'
-import { createTable, updateTable } from '@/src/api/table'
+import { updateTable } from '@/src/api/table'
 
 const FormEditMesas = () => {
+    const [isLoading, setIsLoading] = useState(false); 
     const id = useTables(state => state.id)
     const setId = useTables(state => state.setId)
     const numTable = useTables(state => state.numTable)
@@ -31,6 +32,8 @@ const FormEditMesas = () => {
             return;
         }
 
+        setIsLoading(true);
+
         const tableRegister = await updateTable(id, numTable, capacity);
         console.log(tableRegister)
         if(tableRegister.msg.startsWith("No") || tableRegister.msg.startsWith("Ya")) {
@@ -38,6 +41,7 @@ const FormEditMesas = () => {
             setTimeout(() => {
                 setErrors([]);
             }, 1500);
+            setIsLoading(false); 
             return;
         }
 
@@ -49,6 +53,7 @@ const FormEditMesas = () => {
             setId(0);
             setNumTable(0);
             setCapacity(0);
+            setIsLoading(false);
         }, 1500);
     }
 
@@ -90,16 +95,16 @@ const FormEditMesas = () => {
 
                         { parsedErrors && parsedErrors.length > 0 && (
                             <div className="mb-6">
-							{parsedErrors.map((error, index) => (
-								<div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
-								<div className="flex items-center gap-1.5">
-									<i className={`ri-close-circle-line text-base`}></i>
-									<p className="text-sm">
-										Error: <span className="font-bold text-xs">{error.msg}</span>
-									</p>
-								</div>
-							</div>
-							))}
+                            {parsedErrors.map((error, index) => (
+                                <div key={index} className={`bg-danger/10 text-danger border border-danger/20 text-sm rounded-md py-3 px-5 mb-2`}>
+                                <div className="flex items-center gap-1.5">
+                                    <i className={`ri-close-circle-line text-base`}></i>
+                                    <p className="text-sm">
+                                        Error: <span className="font-bold text-xs">{error.msg}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            ))}
                             </div>
                         )}
 
@@ -146,8 +151,11 @@ const FormEditMesas = () => {
                                     onClick={handleCloseModal}>
                                     Cerrar
                                 </button>
-                                <button className="btn bg-primary text-white" type="submit">
-                                    Actualizar
+                                <button 
+                                    className={`btn ${isLoading ? 'bg-gray-400' : 'bg-primary'} text-white`} 
+                                    type="submit" 
+                                    disabled={isLoading}>
+                                    {isLoading ? 'Actualizando...' : 'Actualizar'}
                                 </button>
                             </div>
                         </form>
