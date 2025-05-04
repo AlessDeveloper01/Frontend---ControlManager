@@ -196,7 +196,7 @@ const MenuPage = () => {
                         Listado de Ordenes
                     </Link>
                 </div>
-                <div className="grid grid-cols-1 gap-4 grid-rows-[auto, auto, auto, 1fr] overflow-y-auto">
+                <div className="grid grid-cols-1 gap-4 grid-rows-[auto,auto,auto,1fr] overflow-y-auto">
                     <h1 className="text-2xl font-black uppercase text-indigo-600 text-center">
                         Categorias
                     </h1>
@@ -210,22 +210,32 @@ const MenuPage = () => {
                                         ? "bg-indigo-100 dark:bg-gray-700"
                                         : "bg-white dark:bg-gray-800"
                                 } border border-indigo-600 gap-4 px-1 py-2 rounded-md`}>
-                                <div className="flex justify-center items-center gap-2">
-                                    <Image
-                                        src={`/logos/icon_${
-                                            category.name.toLowerCase().split(" ")[0]
-                                        }.svg`}
-                                        alt={category.name}
-                                        width={50}
-                                        height={50}
-                                    />
+                                <div className="flex justify-center items-center gap-1">
+                                    {/* Contenedor con tamaño fijo para la imagen */}
+                                    <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center">
+                                        <Image
+                                            src={`/logos/icon_${
+                                                category.name
+                                                    .toLowerCase()
+                                                    .split(" ")[0]
+                                            }.svg`}
+                                            alt={category.name}
+                                            width={50}
+                                            height={50}
+                                            className="max-w-full max-h-full object-contain"
+                                            onError={(e) => {
+                                                e.currentTarget.src = "/logos/icon_noencontrado.svg";
+                                                e.currentTarget.onerror = null;
+                                            }}
+                                        />
+                                    </div>
                                     <p
                                         className={`text-center font-black text-xl ${
                                             categoryName ===
                                             category.name.toLowerCase()
                                                 ? "text-amber-600"
                                                 : "text-black"
-                                        }`}>
+                                        } flex-grow`}>
                                         {category.name}
                                     </p>
                                 </div>

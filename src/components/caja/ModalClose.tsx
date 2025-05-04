@@ -24,14 +24,14 @@ const ModalCloseCaja = () => {
     };
 
     const handleDelete = async () => {
-        setIsProcessing(true); // Deshabilitar el botón y mostrar el mensaje
+        setIsProcessing(true);
         const response = await closeBox();
         if (response.errors && response.errors.length > 0) {
             setErrors(response.errors);
 
             setTimeout(() => {
                 setErrors([]);
-                setIsProcessing(false); // Habilitar el botón nuevamente
+                setIsProcessing(false);
             }, 1500);
             return;
         }
