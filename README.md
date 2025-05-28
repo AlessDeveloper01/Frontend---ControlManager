@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Control & Manager
 
-## Getting Started
+¡Bienvenido a **Sistema Automatizador Desarrollado por LowSolutions**! Este es un sistema de gestión para restaurantes desarrollado con [Next.js](https://nextjs.org). A continuación, encontrarás las instrucciones para instalar, configurar y desplegar el proyecto.
 
-First, run the development server:
+## Requisitos Previos
+
+Antes de comenzar, asegúrate de tener instalado lo siguiente en tu sistema:
+
+- [Node.js](https://nodejs.org/) (versión 16 o superior)
+
+## Instalación
+
+Sigue estos pasos para instalar y ejecutar el proyecto en tu entorno local:
+
+1. Instala las dependencias del proyecto:
+
+    Con `npm`:
+
+    ```bash
+    npm install
+    ```
+
+2. Configura las variables de entorno:
+
+    Crea un archivo `.env` en caso que no se encuentre en la raíz del proyecto y define las variables necesarias
+
+
+    **Para desarrollo mantenlo de la siguiente manera:**
+
+    ```env
+    API_URL=http://localhost:4000/api
+    NEXT_PUBLIC_API_URL=http://localhost:4000/api
+    ```
+
+    Para producción:
+
+    ```env
+    API_URL=Url de tu API desplegada
+    NEXT_PUBLIC_API_URL=Url de tu API desplegada
+    ```
+
+## Uso
+
+Para iniciar el servidor de desarrollo, ejecuta:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la aplicación en acción.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Puedes comenzar a editar las páginas modificando los archivos en la carpeta `app/`. Los cambios se reflejarán automáticamente en el navegador.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Cambio de Logo
+Para cambiar el logo de la aplicación, sigue estos pasos:
+1. Reemplaza el archivo `public/image.png` con tu propio logo. Asegúrate de que el nuevo logo tenga el mismo nombre (`image.png`) y esté en la misma ubicación.
+2. Ingresa a la carpeta `src/assets/image.png` y reemplaza el archivo `image.png` con tu propio logo. Asegúrate de que el nuevo logo tenga el mismo nombre (`image.png`) y esté en la misma ubicación.
 
-## Learn More
+# Cambio de Logo de LowSolutions
+3. Para realizar el cambio del logo de LowSolutions deberás reemplazar el archivo `public/images/logo.png` && `public/images/logowhite.png.png` con tu propio logo. Asegúrate de que el nuevo logo tenga el mismo nombre (`logo.png`) && (`logowhite.png`) y esté en la misma ubicación.
+4. De igual manera, ingresa a la carpeta `src/assets/images/logo.png` && `src/assets/images/logowhite.png` y reemplaza el archivo `logo.png` && `logowhite.png` con tu propio logo. Asegúrate de que el nuevo logo tenga el mismo nombre (`logo.png`) && (`logowhite.png`) y esté en la misma ubicación.
 
-To learn more about Next.js, take a look at the following resources:
+## Agregar Iconos Para el Menú
+Para agregar iconos al menú, sigue estos pasos:
+1. Obligatoriamente se recomienda que los iconos sean Vectoriales (SVG) para evitar problemas de calidad.
+2. Agrega iconos en la carpeta `public/logos/` y asegúrate de que tengan el mismo nombre que la categoria agregada al menú escritos con la nomenclatura siguiente:
+    - `icon_{nombreDeLaCategoria}.svg`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Despliegue
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+El despliegue más sencillo es utilizando la plataforma [Vercel](https://vercel.com/). Sigue estos pasos:
 
-## Deploy on Vercel
+1. Crea una cuenta en [Vercel](https://vercel.com/).
+2. Conecta tu repositorio de GitHub con Vercel.
+3. Configura las variables de entorno en el panel de Vercel.
+4. Haz clic en "Deploy" y tu aplicación estará en línea.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Consulta la [documentación de despliegue de Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para más detalles.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
